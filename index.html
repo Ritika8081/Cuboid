@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EEG Focus Balloon</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .game-container {
+            flex: 1;
+            display: flex;
+            position: relative;
+            min-height: 400px;
+        }
+
+        .shape-arena {
+            flex: 1;
+            position: relative;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+            border-radius: 20px;
+            margin: 20px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .goal-zone {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 60px;
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            border-radius: 0 0 60px 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 0 4px 20px rgba(255, 107, 107, 0.3);
+            z-index: 10;
+        }
+
+        .goal-zone::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+            border-radius: 0 0 62px 62px;
+            z-index: -1;
+            animation: goalGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes goalGlow {
+            0% {
+                opacity: 0.5;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .moving-shape {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 60px;
+            transition: bottom 0.3s ease-out;
+            z-index: 5;
+        }
+
+        .shape-triangle {
+            width: 0;
+            height: 0;
+            border-left: 30px solid transparent;
+            border-right: 30px solid transparent;
+            border-bottom: 52px solid #4ecdc4;
+            filter: drop-shadow(0 4px 12px rgba(78, 205, 196, 0.4));
+        }
+
+        .shape-circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            filter: drop-shadow(0 4px 12px rgba(255, 107, 107, 0.4));
+        }
+
+        .shape-square {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #48dbfb, #0abde3);
+            border-radius: 12px;
+            filter: drop-shadow(0 4px 12px rgba(72, 219, 251, 0.4));
+        }
+
+        .shape-diamond {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(45deg, #ff9ff3, #f368e0);
+            transform: rotate(45deg) translateX(-50%);
+            margin-left: 50%;
+            filter: drop-shadow(0 4px 12px rgba(255, 159, 243, 0.4));
+        }
+
+        .shape-hexagon {
+            width: 60px;
+            height: 52px;
+            background: linear-gradient(45deg, #54a0ff, #2e86de);
+            position: relative;
+            filter: drop-shadow(0 4px 12px rgba(84, 160, 255, 0.4));
+        }
+
+        .shape-hexagon::before,
+        .shape-hexagon::after {
+            content: "";
+            position: absolute;
+            width: 0;
+            border-left: 30px solid transparent;
+            border-right: 30px solid transparent;
+        }
+
+        .shape-hexagon::before {
+            bottom: 100%;
+            border-bottom: 15px solid #54a0ff;
+        }
+
+        .shape-hexagon::after {
+            top: 100%;
+            border-top: 15px solid #2e86de;
+        }
+
+        .celebration {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .firework {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            animation: firework 1s ease-out forwards;
+        }
+
+        @keyframes firework {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(20);
+                opacity: 0;
+            }
+        }
+
+        .success-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px 40px;
+            border-radius: 20px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: successPop 0.5s ease-out;
+            z-index: 101;
+        }
+
+        @keyframes successPop {
+            0% {
+                transform: translate(-50%, -50%) scale(0.3);
+                opacity: 0;
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .band-display {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 280px;
+            z-index: 20;
+        }
+
+        .band-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            gap: 10px;
+        }
+
+        .band-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .band-label {
+            color: white;
+            font-weight: bold;
+            min-width: 50px;
+            font-size: 12px;
+        }
+
+        .band-bar-container {
+            flex: 1;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .band-bar {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .delta-bar {
+            background: linear-gradient(90deg, #ff6b6b, #ee5a52);
+        }
+
+        .theta-bar {
+            background: linear-gradient(90deg, #feca57, #ff9f43);
+        }
+
+        .alpha-bar {
+            background: linear-gradient(90deg, #48dbfb, #0abde3);
+        }
+
+        .beta-bar {
+            background: linear-gradient(90deg, #1dd1a1, #10ac84);
+        }
+
+        .gamma-bar {
+            background: linear-gradient(90deg, #ff9ff3, #f368e0);
+        }
+
+        .band-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        .band-value {
+            color: white;
+            font-weight: bold;
+            font-size: 11px;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        @keyframes shimmer {
+            0% {
+                left: -100%;
+            }
+
+            100% {
+                left: 100%;
+            }
+        }
+
+        .control-panel {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .slider-label {
+            color: white;
+            font-weight: bold;
+            min-width: 120px;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .value-display {
+            color: white;
+            font-weight: bold;
+            min-width: 50px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px 10px;
+            border-radius: 8px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .status {
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .progress-indicator {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(0deg, #1dd1a1, #48dbfb);
+            border-radius: 10px;
+            transition: height 0.3s ease;
+            height: 0%;
+        }
+
+        .goal-counter {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            font-weight: bold;
+            z-index: 20;
+        }
+
+        .winning-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px 60px;
+            border-radius: 20px;
+            text-align: center;
+            font-size: 32px;
+            font-weight: bold;
+            color: #2c3e50;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            animation: successPop 0.5s ease-out;
+            z-index: 102;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="game-container">
+        <div class="shape-arena">
+            <div class="goal-zone">🎯 GOAL</div>
+            <div id="movingShape" class="moving-shape">
+                <div id="shapeElement" class="shape-circle"></div>
+            </div>
+            <div class="progress-indicator">
+                <div id="progressFill" class="progress-fill"></div>
+            </div>
+            <div id="celebration" class="celebration"></div>
+        </div>
+    </div>
+
+    <div class="band-display">
+        <div class="band-row">
+            <span class="band-label">Delta</span>
+            <div class="band-bar-container">
+                <div id="deltaBar" class="band-bar delta-bar" style="width: 0%;"></div>
+            </div>
+            <span id="deltaValue" class="band-value">0%</span>
+        </div>
+        <div class="band-row">
+            <span class="band-label">Theta</span>
+            <div class="band-bar-container">
+                <div id="thetaBar" class="band-bar theta-bar" style="width: 0%;"></div>
+            </div>
+            <span id="thetaValue" class="band-value">0%</span>
+        </div>
+        <div class="band-row">
+            <span class="band-label">Alpha</span>
+            <div class="band-bar-container">
+                <div id="alphaBar" class="band-bar alpha-bar" style="width: 0%;"></div>
+            </div>
+            <span id="alphaValue" class="band-value">0%</span>
+        </div>
+        <div class="band-row">
+            <span class="band-label">Beta</span>
+            <div class="band-bar-container">
+                <div id="betaBar" class="band-bar beta-bar" style="width: 0%;"></div>
+            </div>
+            <span id="betaValue" class="band-value">0%</span>
+        </div>
+        <div class="band-row">
+            <span class="band-label">Gamma</span>
+            <div class="band-bar-container">
+                <div id="gammaBar" class="band-bar gamma-bar" style="width: 0%;"></div>
+            </div>
+            <span id="gammaValue" class="band-value">0%</span>
+        </div>
+    </div>
+
+    <div class="control-panel">
+        <div class="slider-container">
+            <span class="slider-label">Beta Threshold:</span>
+            <input type="range" id="betaThresholdSlider" min="0.1" max="0.9" step="0.05" value="0.4">
+            <span class="value-display" id="betaThresholdValue">0.40</span>
+        </div>
+        <div class="button-group">
+            <button id="connectBtn">Connect Device</button>
+            <button id="disconnectBtn" disabled>Disconnect</button>
+            <button id="startBtn" disabled>Start Stream</button>
+            <button id="stopBtn" disabled>Stop Stream</button>
+        </div>
+        <div class="status" id="statusText">Not connected</div>
+    </div>
+    <!-- Add this in the body section, just after the band-display div -->
+    <div class="goal-counter">
+        Goals: <span id="goalCount">0</span>/5
+    </div>
+    <script>
+        // Shape management
+        const shapes = ['circle', 'triangle', 'square', 'diamond', 'hexagon'];
+        let currentShape = '';
+        let shapePosition = 0; // 0 = bottom, 100 = top
+        let goalReached = false;
+        let celebrationActive = false;
+
+        // DOM elements
+        const movingShape = document.getElementById('movingShape');
+        const shapeElement = document.getElementById('shapeElement');
+        const progressFill = document.getElementById('progressFill');
+        const celebration = document.getElementById('celebration');
+        const betaThresholdSlider = document.getElementById('betaThresholdSlider');
+        const betaThresholdValue = document.getElementById('betaThresholdValue');
+        const connectBtn = document.getElementById("connectBtn");
+        const disconnectBtn = document.getElementById("disconnectBtn");
+        const startBtn = document.getElementById("startBtn");
+        const stopBtn = document.getElementById("stopBtn");
+        const statusText = document.getElementById("statusText");
+
+        // BLE constants
+        const SERVICE_UUID = "4fafc201-1fb5-459e-8fcc-c5c9c331914b";
+        const DATA_CHAR_UUID = "beb5483e-36e1-4688-b7f5-ea07361b26a8";
+        const CONTROL_CHAR_UUID = "0000ff01-0000-1000-8000-00805f9b34fb";
+        const SINGLE_SAMPLE_LEN = 7, BLOCK_COUNT = 10;
+        const NEW_PACKET_LEN = SINGLE_SAMPLE_LEN * BLOCK_COUNT;
+
+        // EEG processing constants
+        const FFT_SIZE = 256;
+        const SAMPLE_RATE = 500;
+        const FREQ_RESOLUTION = SAMPLE_RATE / FFT_SIZE;
+        const DELTA_RANGE = [0.5, 4];
+        const THETA_RANGE = [4, 8];
+        const ALPHA_RANGE = [8, 12];
+        const BETA_RANGE = [12, 30];
+        const GAMMA_RANGE = [30, 45];
+
+        // Variables for BLE connection
+        let device = null, server = null, controlChar = null, dataChar = null;
+        let streaming = false, connected = false;
+        let prevSampleCounter = null, samplesReceived = 0;
+
+        // Variables for EEG processing
+        let fftBuffer = new Array(FFT_SIZE).fill(0);
+        let filterStateCh0 = { z1: 0, z2: 0, x1: 0 };
+        let betaThreshold = 0.40;
+
+        // Initialize random shape on page load
+        function initializeShape() {
+            currentShape = shapes[Math.floor(Math.random() * shapes.length)];
+            shapeElement.className = `shape-${currentShape}`;
+            shapePosition = 0;
+            goalReached = false;
+            celebrationActive = false;
+            updateShapePosition();
+            console.log(`New shape initialized: ${currentShape}`);
+        }
+
+        function updateShapePosition() {
+            const maxHeight = movingShape.parentElement.clientHeight - 140; // Account for goal zone and shape size
+            const bottomPosition = 20 + (shapePosition / 100) * maxHeight;
+            movingShape.style.bottom = `${bottomPosition}px`;
+            progressFill.style.height = `${shapePosition}%`;
+
+            // Check if goal is reached
+            if (shapePosition >= 95 && !goalReached) {
+                goalReached = true;
+                triggerCelebration();
+            }
+        }
+
+        function triggerCelebration() {
+            if (celebrationActive) return;
+            celebrationActive = true;
+
+            // Create fireworks
+            createFireworks();
+
+            // Show success message
+            const successMsg = document.createElement('div');
+            successMsg.className = 'success-message';
+            successMsg.innerHTML = '🎉 GOAL ACHIEVED! 🎉<br><small>Great focus!</small>';
+            celebration.appendChild(successMsg);
+
+            // Reset after celebration
+            setTimeout(() => {
+                celebration.innerHTML = '';
+                celebrationActive = false;
+                // Reset shape position gradually
+                setTimeout(() => {
+                    shapePosition = 0;
+                    goalReached = false;
+                    updateShapePosition();
+                }, 1000);
+            }, 3000);
+        }
+        // Add these variables at the top with other game variables
+        let goalCount = 0;
+        let gameWon = false;
+
+        // Modify the triggerCelebration function
+        function triggerCelebration() {
+            if (celebrationActive) return;
+            celebrationActive = true;
+
+            // Increment goal count
+            if (!gameWon) {
+                goalCount++;
+                document.getElementById('goalCount').textContent = goalCount;
+
+                // Check for win condition
+                if (goalCount >= 5) {
+                    gameWon = true;
+                    showWinningMessage();
+                    return;
+                }
+            }
+
+            // Create fireworks
+            createFireworks();
+
+            // Show success message
+            const successMsg = document.createElement('div');
+            successMsg.className = 'success-message';
+            successMsg.innerHTML = '🎉 GOAL ACHIEVED! 🎉<br><small>Great focus!</small>';
+            celebration.appendChild(successMsg);
+
+            // Reset after celebration
+            setTimeout(() => {
+                celebration.innerHTML = '';
+                celebrationActive = false;
+                // Reset shape position gradually
+                setTimeout(() => {
+                    shapePosition = 0;
+                    goalReached = false;
+                    updateShapePosition();
+                }, 1000);
+            }, 3000);
+        }
+
+        // Add this new function
+        function showWinningMessage() {
+            const winningMsg = document.createElement('div');
+            winningMsg.className = 'winning-message';
+            winningMsg.innerHTML = '🏆 YOU WIN! 🏆<br><small>Amazing focus control!</small><br><br><button id="playAgainBtn" style="margin-top: 20px;">Play Again</button>';
+            document.body.appendChild(winningMsg);
+
+            document.getElementById('playAgainBtn').addEventListener('click', resetGame);
+        }
+
+        // Add this new function
+        function resetGame() {
+            goalCount = 0;
+            gameWon = false;
+            shapePosition = 0;
+            goalReached = false;
+            document.getElementById('goalCount').textContent = '0';
+            document.querySelector('.winning-message')?.remove();
+            updateShapePosition();
+            initializeShape();
+        }
+
+        // Call initializeShape at the end of the script to start the game
+        initializeShape();
+        function createFireworks() {
+            const colors = ['#ff6b6b', '#feca57', '#48dbfb', '#1dd1a1', '#ff9ff3'];
+            const arenaRect = movingShape.parentElement.getBoundingClientRect();
+
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const firework = document.createElement('div');
+                    firework.className = 'firework';
+                    firework.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    firework.style.left = Math.random() * 100 + '%';
+                    firework.style.top = Math.random() * 100 + '%';
+                    celebration.appendChild(firework);
+
+                    setTimeout(() => firework.remove(), 1000);
+                }, i * 100);
+            }
+        }
+
+        // Notch filter for 50Hz noise
+        class Notch {
+            constructor() {
+                this.z1_1 = 0; this.z2_1 = 0;
+                this.x_1 = 0;
+                this.currentSamplingRate = 500;
+            }
+            setSamplingRate(rate) { this.currentSamplingRate = rate; }
+            process(input, type) {
+                if (!type) return input;
+                let output = input;
+                if (this.currentSamplingRate === 500 && type === 1) {
+                    this.x_1 = output - (-1.56858163 * this.z1_1) - (0.96424138 * this.z2_1);
+                    output = 0.96508099 * this.x_1 + -1.56202714 * this.z1_1 + 0.96508099 * this.z2_1;
+                    this.z2_1 = this.z1_1;
+                    this.z1_1 = this.x_1;
+                }
+                return output;
+            }
+        }
+        let notchFilterCh0 = new Notch();
+        notchFilterCh0.setSamplingRate(500);
+
+        // FFT implementation
+        class FFT {
+            size;
+            cosTable;
+            sinTable;
+            constructor(size) {
+                this.size = size;
+                this.cosTable = new Float32Array(size / 2);
+                this.sinTable = new Float32Array(size / 2);
+                for (let i = 0; i < size / 2; i++) {
+                    this.cosTable[i] = Math.cos(-2 * Math.PI * i / size);
+                    this.sinTable[i] = Math.sin(-2 * Math.PI * i / size);
+                }
+            }
+            fft(real, imag) {
+                const n = this.size;
+                let j = 0;
+                for (let i = 0; i < n - 1; i++) {
+                    if (i < j) {
+                        [real[i], real[j]] = [real[j], real[i]];
+                        [imag[i], imag[j]] = [imag[j], imag[i]];
+                    }
+                    let k = n / 2;
+                    while (k <= j) { j -= k; k /= 2; }
+                    j += k;
+                }
+                for (let len = 2; len <= n; len *= 2) {
+                    const half = len / 2;
+                    for (let i = 0; i < n; i += len) {
+                        for (let j = i, k = 0; j < i + half; j++, k++) {
+                            const tRe = real[j + half] * this.cosTable[k] - imag[j + half] * this.sinTable[k];
+                            const tIm = real[j + half] * this.sinTable[k] + imag[j + half] * this.cosTable[k];
+                            real[j + half] = real[j] - tRe;
+                            imag[j + half] = imag[j] - tIm;
+                            real[j] += tRe;
+                            imag[j] += tIm;
+                        }
+                    }
+                }
+            }
+            computeMagnitudes(input) {
+                const real = new Float32Array(this.size);
+                const imag = new Float32Array(this.size);
+                real.set(input);
+                this.fft(real, imag);
+                const mags = new Float32Array(this.size / 2);
+                for (let i = 0; i < mags.length; i++) {
+                    mags[i] = Math.hypot(real[i], imag[i]) / (this.size / 2);
+                }
+                return mags;
+            }
+        }
+
+        const fftProcessor = new FFT(FFT_SIZE);
+
+        // Update threshold value from slider
+        betaThresholdSlider.addEventListener('input', (e) => {
+            betaThreshold = parseFloat(e.target.value);
+            betaThresholdValue.textContent = betaThreshold.toFixed(2);
+        });
+
+        // Utility functions
+        function normalizeSample(sample) {
+            const a = 4096;
+            return (sample - a / 2) * (2 / a);
+        }
+
+        function applyFilter(input, state) {
+            state.x1 = input - (-1.47548044 * state.z1) - (0.58691951 * state.z2);
+            const output = 0.02785977 * state.x1 + 0.05571953 * state.z1 + 0.02785977 * state.z2;
+            state.z2 = state.z1;
+            state.z1 = state.x1;
+            return output;
+        }
+
+        function calculateBandPower(fftMagnitudes, freqRange) {
+            const [startFreq, endFreq] = freqRange;
+            const startIndex = Math.max(1, Math.floor(startFreq / FREQ_RESOLUTION));
+            const endIndex = Math.min(Math.floor(endFreq / FREQ_RESOLUTION), fftMagnitudes.length - 1);
+            let power = 0;
+            for (let i = startIndex; i <= endIndex; i++) {
+                power += fftMagnitudes[i] * fftMagnitudes[i];
+            }
+            return power;
+        }
+
+        // Band smoother class
+        class BandSmoother {
+            constructor(bufferSize) {
+                this.bufferSize = bufferSize;
+                this.buffers = {};
+                this.sums = {};
+                this.index = 0;
+
+                ['delta', 'theta', 'alpha', 'beta', 'gamma'].forEach(band => {
+                    this.buffers[band] = new Array(bufferSize).fill(0);
+                    this.sums[band] = 0;
+                });
+            }
+
+            updateAll(bandValues) {
+                for (const band in bandValues) {
+                    const val = bandValues[band];
+                    this.sums[band] -= this.buffers[band][this.index];
+                    this.sums[band] += val;
+                    this.buffers[band][this.index] = val;
+                }
+                this.index = (this.index + 1) % this.bufferSize;
+            }
+
+            getSmoothed(band) {
+                return this.sums[band] / this.bufferSize;
+            }
+
+            clear() {
+                for (const band in this.buffers) {
+                    this.buffers[band].fill(0);
+                    this.sums[band] = 0;
+                }
+                this.index = 0;
+            }
+        }
+
+        const smoother = new BandSmoother(128);
+
+        function updateBarGraph(deltaP, thetaP, alphaP, betaP, gammaP) {
+            const total = deltaP + thetaP + alphaP + betaP + gammaP;
+            if (total <= 0) return;
+
+            const rels = {
+                delta: deltaP / total,
+                theta: thetaP / total,
+                alpha: alphaP / total,
+                beta: betaP / total,
+                gamma: gammaP / total
+            };
+
+            smoother.updateAll(rels);
+
+            const smooth = {
+                delta: smoother.getSmoothed('delta'),
+                theta: smoother.getSmoothed('theta'),
+                alpha: smoother.getSmoothed('alpha'),
+                beta: smoother.getSmoothed('beta'),
+                gamma: smoother.getSmoothed('gamma')
+            };
+
+            ['delta', 'theta', 'alpha', 'beta', 'gamma'].forEach(band => {
+                const pct = Math.round(smooth[band] * 100);
+                document.getElementById(`${band}Bar`).style.width = `${pct}%`;
+                document.getElementById(`${band}Value`).textContent = `${pct}%`;
+            });
+
+            // Update shape position based on beta levels
+            if (rels.beta >= betaThreshold * 1.1 && smooth.beta >= betaThreshold) {
+                const focusStrength = Math.min((smooth.beta / betaThreshold) * 50, 100);
+                shapePosition = Math.min(shapePosition + focusStrength * 0.5, 100);
+            } else {
+                // Gradually decrease if focus drops
+                shapePosition = Math.max(shapePosition - 0.2, 0);
+            }
+
+            updateShapePosition();
+        }
+
+        function processFFT() {
+            if (fftBuffer.length < FFT_SIZE) return;
+            const fftMags = fftProcessor.computeMagnitudes(fftBuffer);
+            const deltaPower = calculateBandPower(fftMags, DELTA_RANGE);
+            const thetaPower = calculateBandPower(fftMags, THETA_RANGE);
+            const alphaPower = calculateBandPower(fftMags, ALPHA_RANGE);
+            const betaPower = calculateBandPower(fftMags, BETA_RANGE);
+            const gammaPower = calculateBandPower(fftMags, GAMMA_RANGE);
+            updateBarGraph(deltaPower, thetaPower, alphaPower, betaPower, gammaPower);
+        }
+
+        function updateData(eegValue) {
+            eegValue = notchFilterCh0.process(eegValue, 1);
+            fftBuffer.push(eegValue);
+            if (fftBuffer.length > FFT_SIZE) fftBuffer.shift();
+            if (samplesReceived % 10 === 0) processFFT();
+        }
+
+        function processSample(dataView) {
+            if (dataView.byteLength !== SINGLE_SAMPLE_LEN) return;
+
+            const sampleCounter = dataView.getUint8(0);
+            prevSampleCounter = sampleCounter;
+
+            // Read EEG channel
+            const rawEEG = dataView.getInt16(1, false);
+
+            // Process EEG
+            const normEEG = normalizeSample(Math.max(0, Math.min(4095, rawEEG)));
+            const filteredEEG = applyFilter(normEEG, filterStateCh0);
+            updateData(filteredEEG);
+            samplesReceived++;
+        }
+
+        function handleIncomingSamples(event) {
+            const value = event.target.value;
+            if (value.byteLength === NEW_PACKET_LEN) {
+                for (let i = 0; i < NEW_PACKET_LEN; i += SINGLE_SAMPLE_LEN) {
+                    const sampleBuf = value.buffer.slice(i, i + SINGLE_SAMPLE_LEN);
+                    processSample(new DataView(sampleBuf));
+                }
+            } else if (value.byteLength === SINGLE_SAMPLE_LEN) {
+                processSample(new DataView(value.buffer));
+            }
+        }
+        function clearBarGraph() {
+            // for each band, reset width and label
+            ['delta', 'theta', 'alpha', 'beta', 'gamma'].forEach(band => {
+                document.getElementById(`${band}Bar`).style.width = '0%';
+                document.getElementById(`${band}Value`).textContent = '';  // blank instead of “0%”
+            });
+        }
+
+        function updateButtonStates() {
+            connectBtn.disabled = connected || streaming;
+            disconnectBtn.disabled = !connected;
+            startBtn.disabled = !connected || streaming;
+            stopBtn.disabled = !streaming;
+
+            if (!connected) statusText.textContent = "Not connected";
+            else if (!streaming) statusText.textContent = "Connected but not streaming";
+            else statusText.textContent = "Connected and streaming data";
+        }
+
+        async function connectBLE() {
+            try {
+                if (!navigator.bluetooth) {
+                    alert("Web Bluetooth API not available. Use Chrome or Edge.");
+                    return;
+                }
+                device = await navigator.bluetooth.requestDevice({
+                    filters: [{ namePrefix: "NPG" }],
+                    optionalServices: [SERVICE_UUID],
+                });
+                server = await device.gatt.connect();
+                const service = await server.getPrimaryService(SERVICE_UUID);
+                controlChar = await service.getCharacteristic(CONTROL_CHAR_UUID);
+                dataChar = await service.getCharacteristic(DATA_CHAR_UUID);
+                connected = true; streaming = false;
+                fftBuffer = new Array(FFT_SIZE).fill(0);
+                updateButtonStates();
+                console.log("Device connected.");
+            } catch (err) {
+                console.log("Error:", err);
+                alert("Connection error: " + err);
+            }
+        }
+
+        async function disconnectBLE() {
+            try {
+                if (device && device.gatt.connected) {
+                    if (streaming) await stopStream();
+                    device.gatt.disconnect();
+                }
+                connected = false;
+                streaming = false;
+                updateButtonStates();
+                clearBarGraph();
+                console.log("Device disconnected.");
+            } catch (err) {
+                console.log("Error disconnecting:", err);
+            }
+        }
+
+        async function startStream() {
+            try {
+                if (!dataChar || !controlChar) return;
+                await controlChar.writeValue(new TextEncoder().encode("START"));
+                await dataChar.startNotifications();
+                dataChar.addEventListener("characteristicvaluechanged", handleIncomingSamples);
+                streaming = true;
+                updateButtonStates();
+                console.log("Streaming started.");
+            } catch (err) {
+                console.log("Error starting stream:", err);
+                alert("Error starting stream: " + err);
+            }
+        }
+
+        async function stopStream() {
+            try {
+                if (dataChar && streaming) {
+                    await dataChar.stopNotifications();
+                    dataChar.removeEventListener("characteristicvaluechanged", handleIncomingSamples);
+                    streaming = false;
+                    updateButtonStates();
+                    console.log("Streaming stopped.");
+                }
+            } catch (err) {
+                console.log("Error stopping stream:", err);
+            }
+        }
+
+        // Event listeners for buttons
+        connectBtn.addEventListener("click", connectBLE);
+        disconnectBtn.addEventListener("click", disconnectBLE);
+        startBtn.addEventListener("click", startStream);
+        stopBtn.addEventListener("click", stopStream);
+    </script>
+</body>
+
+</html>
