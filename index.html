@@ -146,7 +146,8 @@
     </div>
     <script>
         // Shape management
-        const shapes = ['circle', 'triangle', 'square', 'diamond', 'hexagon'];
+        const shapes = ['cuboid', 'box'];
+
         let currentShape = '';
         let shapePosition = 0; // 0 = bottom, 100 = top
         let goalReached = false;
@@ -227,7 +228,7 @@
 
             const goalZone = document.querySelector('.goal-zone');
             goalZone.className = 'goal-zone';
-            goalZone.classList.add(`${currentShape}-color`);
+            goalZone.classList.add(`${currentShape.replace(/\s+/g, '-').toLowerCase()}-color`);
 
             // Merge shape into goal
             shapeElement.classList.add('shape-merging');
