@@ -815,10 +815,7 @@
              font-size: 12px;
          }
 
-         .moving-shape,
-         .shape-circle,
-         .shape-square,
-         .shape-triangle {
+         .moving-shape {
              width: 40px;
              height: 40px;
          }
