@@ -4,13 +4,7 @@
 
 Welcome to **Cuboid**, an innovative neurofeedback game where you control shapes using your brainwaves! Using real-time EEG signals, you guide different geometric shapes to the goal by increasing your **beta brainwave activity** — a truly mind-powered experience.
 
-## 🚀 Demo
-
-> Imagine moving a shape on your screen *just* with your mind. That’s what Cuboid does!
-
-Open `index.html` in a **Web Bluetooth-supported browser** (Chrome recommended).
-
----
+----
 
 ## 🔗 Requirements
 
@@ -36,7 +30,7 @@ Open `index.html` in a **Web Bluetooth-supported browser** (Chrome recommended).
 ---
 
 ## 🧪 File Structure
-.
+
 ├── index.html         # Main game logic and UI
 ├── style.css          # Custom styles and animations
 ├── README.md          # Project documentation
