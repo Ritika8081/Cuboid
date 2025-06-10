@@ -9,7 +9,7 @@ Welcome to **Cuboid**, an innovative neurofeedback game where you control shapes
 ## 🔗 Requirements
 
 - Neuro PlayGround Lite (NPG Lite) hardware device
-- Web Bluetooth-compatible browser (Chrome / Edge)
+- Web Bluetooth-compatible browser (Chromium based browsers / Edge)
 - Secure context (HTTPS or `localhost`) to access BLE
 
 ---
@@ -58,6 +58,18 @@ Move the shape **upward into the GOAL zone** by increasing your **Beta brainwave
 - Difficulty affects movement speed (not threshold):
   - Easier levels move faster when focused
   - Harder levels move slower when focused
+
+---
+
+### 🎮 Current Difficulty Design Logic
+
+| Level    | Step Forward | Step Back | Notes                                         |
+|----------|--------------|-----------|-----------------------------------------------|
+| Beginner | 15           | 3         | Very forgiving, quick progress with little penalty |
+| Easy     | 13           | 5         | Still easy, but backward penalty is noticeable |
+| Medium   | 10           | 6         | Balanced challenge                            |
+| Hard     | 8            | 7         | Small reward, steep penalty                   |
+| Pro      | 7            | 8         | Progress is slower than regress — very strict |
 
 ---
 
