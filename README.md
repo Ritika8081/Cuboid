@@ -29,8 +29,6 @@ Welcome to **Cuboid**, an innovative neurofeedback game where you control shapes
 
 ## 🧪 File Structure
 
-## 🧪 File Structure
-
 ```
 Cuboid/
 ├── index.html         # Main game logic and UI
