@@ -11,7 +11,7 @@
 <body>
     <div class="game-container">
         <div class="shape-arena">
-            <div class="goal-zone">🎯 GOAL</div>
+            <div class="goal-zone">🎯</div>
             <div id="movingShape" class="moving-shape">
                 <div id="shapeElement" class="shape-circle"></div>
             </div>
@@ -67,45 +67,47 @@
                 <span class="section-title">🎯 Difficulty Level</span>
                 <div class="threshold-display">
                     <span class="threshold-label">Threshold:</span>
-                    <span class="value-display" id="betaThresholdValue">0.25</span>
+                    <span class="value-display" id="betaThresholdValue">0.30</span>
                 </div>
             </div>
 
             <div class="difficulty-buttons">
-                <button class="difficulty-btn" data-level="beginner" data-threshold="0.12">
+                <button class="difficulty-btn" data-level="beginner" data-threshold="0.30" data-stepforward="15"
+                    data-stepback="3">
                     <span class="btn-icon beginner-icon"></span>
                     <span class="btn-text">Beginner</span>
-                    <span class="btn-value">0.12</span>
+
                 </button>
 
-                <button class="difficulty-btn" data-level="easy" data-threshold="0.25">
+                <button class="difficulty-btn" data-level="easy" data-threshold="0.30" data-stepforward="13"
+                    data-stepback="5">
                     <span class="btn-icon easy-icon"></span>
                     <span class="btn-text">Easy</span>
-                    <span class="btn-value">0.25</span>
+
                 </button>
 
-                <button class="difficulty-btn" data-level="medium" data-threshold="0.35">
+                <button class="difficulty-btn" data-level="medium" data-threshold="0.30" data-stepforward="10"
+                    data-stepback="6">
                     <span class="btn-icon medium-icon"></span>
                     <span class="btn-text">Medium</span>
-                    <span class="btn-value">0.35</span>
+
                 </button>
 
-                <button class="difficulty-btn" data-level="hard" data-threshold="0.55">
+                <button class="difficulty-btn" data-level="hard" data-threshold="0.30" data-stepforward="8"
+                    data-stepback="7">
                     <span class="btn-icon hard-icon"></span>
                     <span class="btn-text">Hard</span>
-                    <span class="btn-value">0.55</span>
+
                 </button>
 
-                <button class="difficulty-btn" data-level="pro" data-threshold="0.70">
+                <button class="difficulty-btn" data-level="pro" data-threshold="0.30" data-stepforward="7"
+                    data-stepback="8">
                     <span class="btn-icon pro-icon"></span>
                     <span class="btn-text">Pro</span>
-                    <span class="btn-value">0.70</span>
+
                 </button>
-
-
             </div>
         </div>
-
 
         <div class="panel-divider"></div>
 
@@ -120,19 +122,15 @@
             </div>
             <div class="control-button-grid">
                 <button id="connectBtn" class="control-btn connect-btn">
-
                     <span class="btn-text">Connect</span>
                 </button>
                 <button id="disconnectBtn" class="control-btn disconnect-btn" disabled>
-
                     <span class="btn-text">Disconnect</span>
                 </button>
                 <button id="startBtn" class="control-btn start-btn" disabled>
-
                     <span class="btn-text">Start Stream</span>
                 </button>
                 <button id="stopBtn" class="control-btn stop-btn" disabled>
-
                     <span class="btn-text">Stop Stream</span>
                 </button>
             </div>
@@ -147,6 +145,15 @@
     <script>
         // Shape management
         const shapes = ['cuboid', 'box'];
+        let stepPosition = 0;
+        let forwardStep = 10;
+        let backStep = 5;
+        let lastAboveThresholdTime = null;
+        let lastBelowThresholdTime = null;
+        let betaMaxDuringCalibration = 0;
+        let calibrationStartTime = null;
+        let calibrationInterval = null;
+
 
         let currentShape = '';
         let shapePosition = 0; // 0 = bottom, 100 = top
@@ -196,30 +203,130 @@
         let filterStateCh0 = { z1: 0, z2: 0, x1: 0 };
         let betaThreshold = 0.40;
 
-        // Initialize random shape on page load
+        // Add stepPosition reset in initializeShape
         function initializeShape() {
             currentShape = shapes[Math.floor(Math.random() * shapes.length)];
             shapeElement.className = `shape-${currentShape}`;
-            shapePosition = 0;
+            stepPosition = 0;
             goalReached = false;
             celebrationActive = false;
             updateShapePosition();
 
-            // Clear goal zone background initially
             const goalZone = document.querySelector('.goal-zone');
             goalZone.className = 'goal-zone';
 
             console.log(`New shape initialized: ${currentShape}`);
         }
+        function startCalibrationPhase() {
+            betaMaxDuringCalibration = 0;
+            calibrationStartTime = performance.now();
+            smoother.clear();
 
+            // Remove any existing overlay
+            const oldOverlay = document.getElementById("calibrationOverlayJS");
+            if (oldOverlay) oldOverlay.remove();
 
+            // Create overlay
+            const overlay = document.createElement("div");
+            overlay.id = "calibrationOverlayJS";
+            overlay.style.position = "fixed";
+            overlay.style.top = 0;
+            overlay.style.left = 0;
+            overlay.style.width = "100vw";
+            overlay.style.height = "100vh";
+            overlay.style.background = "rgba(30,39,46,0.85)";
+            overlay.style.display = "flex";
+            overlay.style.justifyContent = "center";
+            overlay.style.alignItems = "center";
+            overlay.style.zIndex = 2000;
+
+            // Create calibration box
+            const box = document.createElement("div");
+            box.style.background = "#fff";
+            box.style.borderRadius = "24px";
+            box.style.padding = "36px 32px 28px 32px";
+            box.style.boxShadow = "0 8px 32px rgba(30,200,180,0.18)";
+            box.style.textAlign = "center";
+            box.style.minWidth = "320px";
+            box.style.position = "relative";
+            box.style.animation = "popIn 0.5s";
+            box.innerHTML = `
+        <div style="
+            margin: 0 auto 18px auto;
+            border: 6px solid #f1f1f1;
+            border-top: 6px solid #48dbfb;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            animation: spin 1s linear infinite;
+        "></div>
+        <h2 style="color:#10ac84;margin-bottom:12px;font-size:1.5em;font-weight:bold;">🧠 Calibrating Your Brainwaves...</h2>
+        <p style="color:#222f3e;font-size:1.1em;margin:10px 0;">Please stay focused. Measuring beta activity.</p>
+        <p id="calibrationCountdownJS" style="font-size:2.5em;color:#48dbfb;font-weight:bold;margin-top:18px;letter-spacing:2px;">5</p>
+    `;
+            overlay.appendChild(box);
+            document.body.appendChild(overlay);
+
+            // Spinner animation
+            const style = document.createElement('style');
+            style.innerHTML = `
+    @keyframes spin { 0% { transform: rotate(0deg);} 100% { transform: rotate(360deg);} }
+    @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    `;
+            document.head.appendChild(style);
+
+            let secondsLeft = 5;
+            const countdown = document.getElementById("calibrationCountdownJS");
+            countdown.textContent = secondsLeft;
+
+            const timer = setInterval(() => {
+                secondsLeft--;
+                countdown.textContent = secondsLeft;
+                if (secondsLeft <= 0) {
+                    clearInterval(timer);
+                }
+            }, 1000);
+
+            calibrationInterval = setInterval(() => {
+                const smoothBeta = smoother.getSmoothed('beta');
+                if (smoothBeta > betaMaxDuringCalibration) {
+                    betaMaxDuringCalibration = smoothBeta;
+                }
+
+                const now = performance.now();
+                if (now - calibrationStartTime >= 5000) {
+                    clearInterval(calibrationInterval);
+                    // Remove overlay
+                    overlay.remove();
+                    style.remove();
+                    applyCalibratedThreshold();
+                }
+            }, 100);
+        }
+
+        function applyCalibratedThreshold() {
+            betaThreshold = betaMaxDuringCalibration;
+            thresholdDisplay.textContent = betaThreshold.toFixed(2);
+            console.log("Calibration complete. Beta threshold set to:", betaThreshold.toFixed(2));
+            alert(`Calibration complete!\nBeta threshold set to: ${betaThreshold.toFixed(2)}`);
+            // Now start the shape game
+            initializeShape();
+        }
+        // Modified updateShapePosition to use stepPosition
         function updateShapePosition() {
             const maxHeight = movingShape.parentElement.clientHeight - 140;
-            // 0% is at bottom, 100% is at top (goal)
-            const bottomPosition = 20 + (shapePosition / 100) * maxHeight;
-
+            const bottomPosition = 20 + (stepPosition / 100) * maxHeight;
             movingShape.style.bottom = `${bottomPosition}px`;
-            progressFill.style.height = `${shapePosition}%`;
+            progressFill.style.height = `${stepPosition}%`;
+        }
+
+        function updateStepPosition(delta) {
+            stepPosition = Math.max(0, Math.min(100, stepPosition + delta));
+            updateShapePosition();
+            if (stepPosition >= 100 && !goalReached) {
+                goalReached = true;
+                triggerCelebration();
+            }
         }
 
         function triggerCelebration() {
@@ -415,9 +522,11 @@
 
         const thresholdDisplay = document.getElementById('betaThresholdValue');
 
+        // ...existing code...
+
         function setDifficulty(level, displayValue, threshold) {
-            betaThreshold = threshold;
-            thresholdDisplay.textContent = displayValue;
+            betaThreshold = 0.30; // Always set to 0.30
+            thresholdDisplay.textContent = "0.30";
 
             difficultyButtons.forEach(btn => btn.classList.remove('active'));
 
@@ -425,9 +534,28 @@
                 btn => btn.dataset.level === level
             );
             if (targetBtn) {
+                forwardStep = parseInt(targetBtn.dataset.stepforward || '10');
+                backStep = parseInt(targetBtn.dataset.stepback || '5');
                 targetBtn.classList.add('active');
             }
         }
+
+        // Attach event listeners to all buttons
+        difficultyButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const level = button.dataset.level;
+                setDifficulty(level, "0.30", 0.30); // Always use 0.30
+            });
+        });
+
+        // Set default to easy
+        const defaultButton = document.querySelector('.difficulty-btn[data-level="easy"]');
+        if (defaultButton) {
+            const level = defaultButton.dataset.level;
+            setDifficulty(level, "0.30", 0.30); // Always use 0.30
+        }
+
+
 
         // Attach event listeners to all buttons
         difficultyButtons.forEach(button => {
@@ -438,15 +566,6 @@
                 setDifficulty(level, displayValue, threshold);
             });
         });
-
-        // Set default to easy
-        const defaultButton = document.querySelector('.difficulty-btn[data-level="easy"]');
-        if (defaultButton) {
-            const level = defaultButton.dataset.level;
-            const threshold = parseFloat(defaultButton.dataset.threshold);
-            const displayValue = defaultButton.querySelector('.btn-value').textContent.trim();
-            setDifficulty(level, displayValue, threshold);
-        }
 
 
         // Utility functions
@@ -513,6 +632,7 @@
 
         const smoother = new BandSmoother(128);
 
+        // Replace updateBarGraph logic to use time thresholds
         function updateBarGraph(deltaP, thetaP, alphaP, betaP, gammaP) {
             const total = deltaP + thetaP + alphaP + betaP + gammaP;
             if (total <= 0) return;
@@ -541,25 +661,23 @@
                 document.getElementById(`${band}Value`).textContent = `${pct}%`;
             });
 
+            const currentTime = performance.now();
 
-            // Shape position will be between 0% and 100% of the threshold value
-            const progress = Math.min(1, smooth.beta / betaThreshold);
-
-            // Update shape position (0-100%)
-            shapePosition = progress * 100;
-
-            // // If we reach 95%, trigger goal
-            // if (shapePosition >= 99 && !goalReached) {
-            //     goalReached = true;
-            //     triggerCelebration();
-            // }
-
-            if (smooth.beta >= betaThreshold && !goalReached) {
-                goalReached = true;
-                triggerCelebration();
+            if (smooth.beta >= betaThreshold) {
+                if (!lastAboveThresholdTime) lastAboveThresholdTime = currentTime;
+                if (currentTime - lastAboveThresholdTime >= 3000) {
+                    updateStepPosition(forwardStep);
+                    lastAboveThresholdTime = null;
+                    lastBelowThresholdTime = null;
+                }
+            } else {
+                if (!lastBelowThresholdTime) lastBelowThresholdTime = currentTime;
+                if (currentTime - lastBelowThresholdTime >= 3000) {
+                    updateStepPosition(-backStep);
+                    lastBelowThresholdTime = null;
+                    lastAboveThresholdTime = null;
+                }
             }
-
-            updateShapePosition();
         }
 
         function processFFT() {
@@ -660,6 +778,8 @@
                 streaming = false;
                 updateButtonStates();
                 clearBarGraph();
+                stepPosition = 0;
+                updateShapePosition();
                 console.log("Device disconnected.");
             } catch (err) {
                 console.log("Error disconnecting:", err);
@@ -669,17 +789,21 @@
         async function startStream() {
             try {
                 if (!dataChar || !controlChar) return;
+
                 await controlChar.writeValue(new TextEncoder().encode("START"));
                 await dataChar.startNotifications();
                 dataChar.addEventListener("characteristicvaluechanged", handleIncomingSamples);
                 streaming = true;
                 updateButtonStates();
                 console.log("Streaming started.");
+
+                startCalibrationPhase();  // ⬅️ initiate the 5-second beta calibration
             } catch (err) {
                 console.log("Error starting stream:", err);
                 alert("Error starting stream: " + err);
             }
         }
+
 
         async function stopStream() {
             try {

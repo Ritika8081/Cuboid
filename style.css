@@ -93,10 +93,6 @@
          cursor: pointer;
      }
 
-     .moving-shape:hover {
-         transform: translateX(-50%) translateY(-8px) scale(1.1);
-     }
-
      /* Enhanced Hexagon */
      .shape-hexagon {
          width: 60px;
@@ -130,10 +126,7 @@
          filter: brightness(0.9);
      }
 
-     .shape-hexagon:hover {
-         filter: drop-shadow(0 12px 35px rgba(102, 126, 234, 0.7));
-         transform: rotate(180deg);
-     }
+
 
      @keyframes hexagon-float {
 
@@ -165,14 +158,7 @@
          animation: cuboid-pulse 2s ease-in-out infinite alternate;
      }
 
-     .shape-cuboid:hover {
-         transform: perspective(150px) rotateX(25deg) rotateY(-30deg) scale(1.05);
-         box-shadow:
-             15px 15px 0 0 rgba(6, 160, 133, 0.9),
-             0 15px 0 0 rgba(17, 153, 142, 0.7),
-             15px 0 0 0 rgba(56, 239, 125, 0.5),
-             0 0 30px rgba(17, 153, 142, 0.5);
-     }
+
 
      @keyframes cuboid-pulse {
          0% {
@@ -202,14 +188,7 @@
          animation: prism-shimmer 2.5s ease-in-out infinite;
      }
 
-     .shape-rectangular-prism:hover {
-         transform: perspective(140px) rotateX(20deg) rotateY(-25deg) scale(1.08);
-         box-shadow:
-             18px 12px 0 0 rgba(240, 147, 251, 0.9),
-             0 12px 0 0 rgba(250, 112, 154, 0.7),
-             18px 0 0 0 rgba(254, 225, 64, 0.5),
-             0 0 35px rgba(250, 112, 154, 0.5);
-     }
+
 
      @keyframes prism-shimmer {
 
@@ -242,15 +221,6 @@
          animation: box-wobble 3s ease-in-out infinite;
      }
 
-     .shape-box:hover {
-         transform: perspective(120px) rotateX(18deg) rotateY(-18deg) scale(1.1);
-         box-shadow:
-             12px 12px 0 0 rgba(90, 103, 216, 0.9),
-             0 12px 0 0 rgba(102, 126, 234, 0.7),
-             12px 0 0 0 rgba(118, 75, 162, 0.5),
-             0 0 30px rgba(102, 126, 234, 0.5);
-         border-radius: 8px;
-     }
 
      @keyframes box-wobble {
 
@@ -268,14 +238,6 @@
          }
      }
 
-     /* Additional hover effects for moving-shape container */
-     .moving-shape:hover .shape-hexagon::before {
-         border-bottom-color: #764ba2;
-     }
-
-     .moving-shape:hover .shape-hexagon::after {
-         border-top-color: #667eea;
-     }
 
      /* Responsive improvements */
      @media (max-width: 768px) {
