@@ -23,8 +23,6 @@ Welcome to **Cuboid**, an innovative neurofeedback game where you control shapes
 - 📊 Live brainwave band visualization:
   - Delta, Theta, Alpha, Beta, Gamma
 - 🔌 Device control panel (Connect / Disconnect / Start / Stop)
-- 🧠 Signal processing:
-  - Notch filtering, FFT, Band Power calculation
 - 🎉 Goal celebrations and a win state on achieving 5 goals
 
 ---
@@ -35,7 +33,6 @@ Welcome to **Cuboid**, an innovative neurofeedback game where you control shapes
 ├── style.css          # Custom styles and animations
 ├── README.md          # Project documentation
 └── assets/            # (Optional) Add device images, icons, or EEG diagrams
-
 
 ---
 
@@ -58,19 +55,23 @@ Move the shape **upward into the GOAL zone** by increasing your **Beta brainwave
 
 ### 🎯 2. Choose Difficulty
 - Select from: **Beginner, Easy, Medium, Hard, Pro**
-- Each level sets a higher **Beta threshold** for the shape to move.
+- Difficulty affects movement speed (not threshold):
+  - Easier levels move faster when focused
+  - Harder levels move slower when focused
 
 ---
 
 ### ▶️ 3. Start the EEG Stream
 - Click `Start Stream` after connecting.
-- EEG data will start flowing, and bars for **Delta, Theta, Alpha, Beta, Gamma** will update in real-time.
+- The game will automatically begin a **5-second calibration phase** to measure your maximum beta activity.
+- After calibration, EEG data will start flowing, and bars for **Delta, Theta, Alpha, Beta, Gamma** will update in real-time.
 
 ---
 
 ### 🧠 4. Focus and Control
-- Focus your mind to raise **Beta waves**.
-- When your brain activity crosses the set **Beta threshold**, the shape moves upward.
+- Focus your mind to raise **Beta waves** above your personal threshold.
+- When your beta activity is sustained for 3 seconds, the shape moves upward.
+- If beta drops below threshold for 3 seconds, the shape moves downward.
 - If it reaches the goal zone — 🎉 you score a GOAL!
 
 ---
@@ -83,7 +84,8 @@ Move the shape **upward into the GOAL zone** by increasing your **Beta brainwave
 ---
 
 ### 🧘‍♀️ Tips for Playing
-- Focus your attention—try deep concentration or mental math.
+- During calibration, try to focus intensely to set a higher personal threshold
+- Maintain consistent focus - the shape moves after 3 seconds of sustained beta activity
 - Avoid distractions. Calm but alert minds tend to score better.
 - Practice different mental states to observe how brainwaves shift.
 
@@ -92,7 +94,6 @@ Move the shape **upward into the GOAL zone** by increasing your **Beta brainwave
 Built with curiosity by [**Ritika Mishra**](https://github.com/Ritika8081)
 
 > Decoding mindfulness with every brainwave 💫
-
 
 ---
 
@@ -113,4 +114,3 @@ Steps to contribute:
 ## 📜 License
 
 **MIT License** – use freely, but give credit!
-
