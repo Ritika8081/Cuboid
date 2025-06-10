@@ -2,14 +2,14 @@
 
 ![Cuboid](assets/Game.png)
 
-Welcome to **Cuboid**, an innovative neurofeedback game where you control shapes using your brainwaves! Using real-time EEG signals, you guide different geometric shapes to the goal by increasing your **beta brainwave activity** — a truly mind-powered experience.
+Welcome to **Cuboid**, an innovative neurofeedback game where you control shapes using your brainwaves! Using real-time EEG signals, you guide geometric shapes to the goal by increasing your **beta brainwave activity** — a truly mind-powered experience.
 
 ----
 
 ## 🔗 Requirements
 
 - Neuro PlayGround Lite (NPG Lite) hardware device
-- Web Bluetooth-compatible browser (Chromium based browsers / Edge)
+- Web Bluetooth-compatible browser (Chrome / Edge)
 - Secure context (HTTPS or `localhost`) to access BLE
 
 ---
@@ -17,7 +17,7 @@ Welcome to **Cuboid**, an innovative neurofeedback game where you control shapes
 ## 🧩 Features
 
 - 🎯 Goal-based gameplay driven by your **brainwave focus**
-- 📶 Real-time EEG streaming from BLE devices like NPG
+- 📶 Real-time EEG streaming from BLE devices like NPG Lite
 - 🎛️ Multiple difficulty levels:
   - Beginner, Easy, Medium, Hard, Pro
 - 📊 Live brainwave band visualization:
@@ -29,10 +29,15 @@ Welcome to **Cuboid**, an innovative neurofeedback game where you control shapes
 
 ## 🧪 File Structure
 
+## 🧪 File Structure
+
+```
+Cuboid/
 ├── index.html         # Main game logic and UI
 ├── style.css          # Custom styles and animations
 ├── README.md          # Project documentation
-└── assets/            # (Optional) Add device images, icons, or EEG diagrams
+└── assets/            # Add device images, icons, or EEG diagrams
+```
 
 ---
 
