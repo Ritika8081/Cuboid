@@ -11,7 +11,7 @@
 <body>
     <div class="game-container">
         <div class="shape-arena">
-            <div class="goal-zone">🎯</div>
+            <div class="goal-zone"><span class="goal-emoji">🎯</span></div>
             <div id="movingShape" class="moving-shape">
                 <div id="shapeElement" class="shape-circle"></div>
             </div>
@@ -226,6 +226,9 @@
             const oldOverlay = document.getElementById("calibrationOverlayJS");
             if (oldOverlay) oldOverlay.remove();
 
+            // Store all smoothed beta values during calibration
+            const betaValues = [];
+
             // Create overlay
             const overlay = document.createElement("div");
             overlay.id = "calibrationOverlayJS";
@@ -289,6 +292,7 @@
 
             calibrationInterval = setInterval(() => {
                 const smoothBeta = smoother.getSmoothed('beta');
+                betaValues.push(smoothBeta);
                 if (smoothBeta > betaMaxDuringCalibration) {
                     betaMaxDuringCalibration = smoothBeta;
                 }
@@ -296,6 +300,30 @@
                 const now = performance.now();
                 if (now - calibrationStartTime >= 5000) {
                     clearInterval(calibrationInterval);
+                    // Find max value and its index
+                    let max = -Infinity, maxIdx = -1;
+                    betaValues.forEach((v, i) => {
+                        if (v > max) {
+                            max = v;
+                            maxIdx = i;
+                        }
+                    });
+                    console.log("Max index:", maxIdx, "Array length:", betaValues.length);
+
+                    // Get previous two, max, next two values
+                    const prev2 = betaValues[maxIdx - 2] !== undefined ? betaValues[maxIdx - 2] : null;
+                    const prev1 = betaValues[maxIdx - 1] !== undefined ? betaValues[maxIdx - 1] : null;
+                    const next1 = betaValues[maxIdx + 1] !== undefined ? betaValues[maxIdx + 1] : null;
+                    const next2 = betaValues[maxIdx + 2] !== undefined ? betaValues[maxIdx + 2] : null;
+
+
+                    // Calculate average of non-null values
+                    const values = [prev2, prev1, max, next1, next2].filter(v => v !== null);
+                    const avg = values.reduce((sum, v) => sum + v, 0) / values.length;
+
+
+                    // Set beta threshold to 70% of max
+                    betaMaxDuringCalibration = max * 0.7;
                     // Remove overlay
                     overlay.remove();
                     style.remove();
@@ -308,9 +336,40 @@
             betaThreshold = betaMaxDuringCalibration;
             thresholdDisplay.textContent = betaThreshold.toFixed(2);
             console.log("Calibration complete. Beta threshold set to:", betaThreshold.toFixed(2));
-            alert(`Calibration complete!\nBeta threshold set to: ${betaThreshold.toFixed(2)}`);
-            // Now start the shape game
-            initializeShape();
+
+            // Create a temporary overlay message
+            const msg = document.createElement('div');
+            msg.className = 'calibration-message';
+            msg.innerHTML = `
+        <div style="
+            background: #fff;
+            border-radius: 20px;
+            padding: 28px 36px;
+            box-shadow: 0 4px 24px rgba(30,200,180,0.18);
+            text-align: center;
+            font-size: 1.3em;
+            color: #10ac84;
+            font-weight: bold;
+        ">
+            Calibration complete!<br>
+            <span style="color:#222f3e;font-weight:normal;font-size:0.9em;">
+                Beta threshold set to: <span style="color:#48dbfb;">${betaThreshold.toFixed(2)}</span>
+            </span>
+        </div>
+    `;
+            msg.style.position = 'fixed';
+            msg.style.top = '50%';
+            msg.style.left = '50%';
+            msg.style.transform = 'translate(-50%, -50%)';
+            msg.style.zIndex = 3000;
+            msg.style.pointerEvents = 'none';
+
+            document.body.appendChild(msg);
+
+            setTimeout(() => {
+                msg.remove();
+                initializeShape(); // Now start the shape game
+            }, 2500);
         }
         // Modified updateShapePosition to use stepPosition
         function updateShapePosition() {
@@ -320,14 +379,27 @@
             progressFill.style.height = `${stepPosition}%`;
         }
 
-        function updateStepPosition(delta) {
-            stepPosition = Math.max(0, Math.min(100, stepPosition + delta));
-            updateShapePosition();
-            if (stepPosition >= 100 && !goalReached) {
-                goalReached = true;
-                triggerCelebration();
-            }
+        function animateStepChange(stepChange, stepSize = 1, delay = 100) {
+            let target = stepPosition + stepChange;
+            target = Math.max(0, Math.min(100, target)); // clamp between 0–100
+
+            const direction = stepChange > 0 ? 1 : -1;
+
+            const stepInterval = setInterval(() => {
+                if ((direction > 0 && stepPosition >= target) ||
+                    (direction < 0 && stepPosition <= target)) {
+                    clearInterval(stepInterval);
+                    if (stepPosition >= 100 && !goalReached) {
+                        goalReached = true;
+                        triggerCelebration();
+                    }
+                    return;
+                }
+                stepPosition += direction * stepSize;
+                updateShapePosition();
+            }, delay);
         }
+
 
         function triggerCelebration() {
             if (celebrationActive) return;
@@ -522,7 +594,7 @@
 
         const thresholdDisplay = document.getElementById('betaThresholdValue');
 
-        // ...existing code...
+
 
         function setDifficulty(level, displayValue, threshold) {
             betaThreshold = 0.30; // Always set to 0.30
@@ -666,18 +738,19 @@
             if (smooth.beta >= betaThreshold) {
                 if (!lastAboveThresholdTime) lastAboveThresholdTime = currentTime;
                 if (currentTime - lastAboveThresholdTime >= 3000) {
-                    updateStepPosition(forwardStep);
+                    animateStepChange(forwardStep); // no delta here
                     lastAboveThresholdTime = null;
                     lastBelowThresholdTime = null;
                 }
             } else {
                 if (!lastBelowThresholdTime) lastBelowThresholdTime = currentTime;
                 if (currentTime - lastBelowThresholdTime >= 3000) {
-                    updateStepPosition(-backStep);
+                    animateStepChange(-backStep); // still easy to read
                     lastBelowThresholdTime = null;
                     lastAboveThresholdTime = null;
                 }
             }
+
         }
 
         function processFFT() {
