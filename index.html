@@ -17,7 +17,9 @@
             </div>
             <div class="progress-indicator">
                 <div id="progressFill" class="progress-fill"></div>
+                <div id="progressPercentage" class="progress-percentage">0%</div>
             </div>
+
             <div id="celebration" class="celebration"></div>
         </div>
     </div>
@@ -60,18 +62,66 @@
         </div>
     </div>
 
+    <div id="rulesModal" class="rules-modal">
+        <div class="rules-content">
+            <span class="close-btn" id="closeRules">&times;</span>
+
+            <p><strong>🎯 Goal:</strong> Push the cuboid to 100% by staying focused. Your Beta brainwaves control the
+                upward motion.</p>
+
+            <h3>📋 Steps</h3>
+            <ol>
+                <li>Connect your EEG device.</li>
+                <li>Run calibration to set your personal threshold.</li>
+                <li>Select a difficulty level.</li>
+                <li>Stay focused to rise — lose focus and you'll fall!</li>
+            </ol>
+
+            <h3>🎮 Levels</h3>
+            <ul>
+                <li><strong>🟢 Beginner:</strong> +10 / -2 — Easy climb.</li>
+                <li><strong>🟡 Easy:</strong> +8 / -3 — Gentle challenge.</li>
+                <li><strong>🟠 Medium:</strong> +6 / -4 — Balanced play.</li>
+                <li><strong>🔴 Hard:</strong> +4 / -5 — Demands focus.</li>
+                <li><strong>🟣 Pro:</strong> +3 / -6 — Elite level.</li>
+            </ul>
+
+            <h3>🎨 Progress Bar</h3>
+            <ul>
+                <li>🔴 Red: Low focus</li>
+                <li>🟠 Orange: Warming up</li>
+                <li>🟡 Yellow: Midway</li>
+                <li>🟢 Green: Near goal</li>
+            </ul>
+
+            <h3>💡 Tips</h3>
+            <ul>
+                <li>Visualize success or numbers.</li>
+                <li>Stay still, relaxed, alert.</li>
+            </ul>
+
+            <p style="font-style: italic; color: #444;">Train your brain. Improve focus. Enjoy the journey.</p>
+        </div>
+    </div>
     <div class="control-panel updated-panel">
         <!-- Difficulty Section -->
+
         <div class="panel-section difficulty-section">
             <div class="section-header">
+
                 <span class="section-title">🎯 Difficulty Level</span>
+                <button id="rulesBtn" class="rules-button margin-left:10px">❓ How to Play</button>
                 <div class="threshold-display">
                     <span class="threshold-label">Threshold:</span>
                     <span class="value-display" id="betaThresholdValue">0.30</span>
+
                 </div>
             </div>
 
+
+
             <div class="difficulty-buttons">
+
                 <button class="difficulty-btn" data-level="beginner" data-threshold="0.30" data-stepforward="15"
                     data-stepback="3">
                     <span class="btn-icon beginner-icon"></span>
@@ -202,6 +252,21 @@
         let fftBuffer = new Array(FFT_SIZE).fill(0);
         let filterStateCh0 = { z1: 0, z2: 0, x1: 0 };
         let betaThreshold = 0.40;
+
+        const rulesBtn = document.getElementById("rulesBtn");
+        const rulesModal = document.getElementById("rulesModal");
+        const closeRules = document.getElementById("closeRules");
+        rulesBtn.addEventListener("click", () => {
+            rulesModal.classList.add("show");
+        });
+        closeRules.addEventListener("click", () => {
+            rulesModal.classList.remove("show");
+        });
+        window.addEventListener("click", (e) => {
+            if (e.target === rulesModal) {
+                rulesModal.classList.remove("show");
+            }
+        });
 
         // Add stepPosition reset in initializeShape
         function initializeShape() {
@@ -371,12 +436,26 @@
                 initializeShape(); // Now start the shape game
             }, 2500);
         }
-        // Modified updateShapePosition to use stepPosition
         function updateShapePosition() {
-            const maxHeight = movingShape.parentElement.clientHeight - 140;
-            const bottomPosition = 20 + (stepPosition / 100) * maxHeight;
+            const arenaHeight = movingShape.parentElement.clientHeight - 140;
+            const bottomPosition = 20 + (stepPosition / 100) * arenaHeight;
             movingShape.style.bottom = `${bottomPosition}px`;
             progressFill.style.height = `${stepPosition}%`;
+
+            // Update percentage text
+            const progressText = document.getElementById("progressPercentage");
+            progressText.textContent = `${Math.round(stepPosition)}%`;
+
+            // Color cues based on proximity
+            if (stepPosition >= 90) {
+                progressFill.style.backgroundColor = "#10ac84"; // Green
+            } else if (stepPosition >= 60) {
+                progressFill.style.backgroundColor = "#feca57"; // Yellow
+            } else if (stepPosition >= 30) {
+                progressFill.style.backgroundColor = "#ff9f43"; // Orange
+            } else {
+                progressFill.style.backgroundColor = "#ee5253"; // Red
+            }
         }
 
         function animateStepChange(stepChange, stepSize = 1, delay = 100) {
@@ -619,7 +698,7 @@
             });
         });
 
-
+        setDifficulty('easy');
 
 
         // Attach event listeners to all buttons
@@ -739,6 +818,31 @@
                 if (!lastBelowThresholdTime) lastBelowThresholdTime = currentTime;
                 if (currentTime - lastBelowThresholdTime >= 3000) {
                     animateStepChange(-backStep); // still easy to read
+                    lastBelowThresholdTime = null;
+                    lastAboveThresholdTime = null;
+                }
+            }
+
+
+            if (smooth.beta >= betaThreshold) {
+                if (!lastAboveThresholdTime) lastAboveThresholdTime = currentTime;
+
+                // 🔥 Add visual glow
+                if (betaBar) {
+                    betaBar.classList.add("glow");
+                    setTimeout(() => betaBar.classList.remove("glow"), 500);
+                }
+
+                if (currentTime - lastAboveThresholdTime >= 3000) {
+                    animateStepChange(forwardStep);
+                    lastAboveThresholdTime = null;
+                    lastBelowThresholdTime = null;
+                }
+            } else {
+                if (!lastBelowThresholdTime) lastBelowThresholdTime = currentTime;
+
+                if (currentTime - lastBelowThresholdTime >= 3000) {
+                    animateStepChange(-backStep);
                     lastBelowThresholdTime = null;
                     lastAboveThresholdTime = null;
                 }

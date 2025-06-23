@@ -31,6 +31,103 @@
          border: 1px solid rgba(255, 255, 255, 0.2);
      }
 
+
+     /* Make the rules button inline and nicely spaced */
+     .rules-button {
+         position: static;
+         /* Remove absolute positioning */
+         margin-left: 14px;
+         /* Space from the title */
+         padding: 6px 14px;
+         background: #0984e3;
+         color: white;
+         border: none;
+         border-radius: 6px;
+         font-weight: bold;
+         cursor: pointer;
+         font-size: 15px;
+         transition: background 0.2s;
+         box-shadow: 0 2px 8px rgba(9, 132, 227, 0.08);
+         vertical-align: middle;
+     }
+
+     .rules-button:hover {
+         background: #0652dd;
+     }
+
+     /* Modal overlay: full screen, centered content */
+     /* Modal overlay: full screen, centered content */
+     .rules-modal {
+         margin-top: 13px;
+         margin-bottom: 13px;
+         display: none;
+         /* Only this! */
+         position: fixed;
+         z-index: 999;
+         left: 0;
+         top: 0;
+         width: 100vw;
+         height: 100vh;
+         background-color: rgba(0, 0, 0, 0.6);
+         justify-content: center;
+         align-items: center;
+     }
+
+     /* When you want to show the modal, add this class */
+     .rules-modal.show {
+         display: flex;
+     }
+
+     /* Modal content: centered box */
+     .rules-content {
+         background-color: #fff;
+         padding: 28px 36px;
+         border-radius: 16px;
+         max-width: 420px;
+         width: 90vw;
+         text-align: left;
+         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+         position: relative;
+         animation: modalPop 0.3s;
+     }
+
+     @keyframes modalPop {
+         0% {
+             transform: scale(0.8);
+             opacity: 0;
+         }
+
+         100% {
+             transform: scale(1);
+             opacity: 1;
+         }
+     }
+
+     .rules-content h2 {
+         margin-top: 0;
+     }
+
+     .rules-content ul {
+         padding-left: 20px;
+     }
+
+     .rules-content li {
+         margin-bottom: 10px;
+         line-height: 1.5;
+     }
+
+     .close-btn {
+         position: absolute;
+         top: 8px;
+         right: 12px;
+         font-size: 24px;
+         font-weight: bold;
+         cursor: pointer;
+         color: #444;
+         background: none;
+         border: none;
+     }
+
      .goal-zone {
          position: absolute;
          top: 0;
@@ -48,14 +145,16 @@
          font-weight: bold;
          font-size: 14px;
          box-shadow: 0 4px 20px rgba(255, 255, 255, 0.3);
-         
+
          transition: background 0.3s ease;
          /* Smooth transition for color change */
      }
+
      .goal-zone .goal-emoji {
-    font-size: 2.8em; /* Adjust as needed */
-    line-height: 1;
-}
+         font-size: 2.8em;
+         /* Adjust as needed */
+         line-height: 1;
+     }
 
      .goal-zone::before {
          content: '';
@@ -686,28 +785,54 @@
      }
 
 
+     /* Make sure the progress bar is above the goal zone */
      .progress-indicator {
          position: absolute;
-         left: 20px;
-         top: 50%;
-         transform: translateY(-50%);
+         left: 30px;
+         /* Move it away from the center/goal */
+         top: 80px;
+         /* Place it below the goal zone */
          width: 20px;
-         height: 200px;
-         background: rgba(255, 255, 255, 0.1);
+         height: calc(100% - 120px);
+         /* Adjust height to fit arena */
+         background: #ccc;
          border-radius: 10px;
          overflow: hidden;
+         z-index: 20;
+         /* Higher than .goal-zone (default z-index: auto/0) */
      }
 
      .progress-fill {
          position: absolute;
          bottom: 0;
-         left: 0;
-         right: 0;
-         background: linear-gradient(#48dbfb);
-         border-radius: 10px;
-         transition: height 0.3s ease;
+         width: 100%;
          height: 0%;
+         background-color: #ee5253;
+         transition: height 0.3s ease, background-color 0.3s ease;
+         z-index: 21;
+         /* Above the indicator */
      }
+
+     .progress-percentage {
+         position: absolute;
+         left: 30px;
+         /* Align with progress bar */
+         top: 50px;
+         /* Place above the progress bar and below the goal zone */
+         width: 60px;
+         text-align: center;
+         font-size: 1.15rem;
+         font-weight: bold;
+         color: #10ac84;
+         background: rgba(255, 255, 255, 0.95);
+         border-radius: 12px;
+         padding: 6px 0;
+         z-index: 30;
+         /* Ensure it's above everything else */
+         box-shadow: 0 2px 8px rgba(16, 172, 132, 0.10);
+         pointer-events: none;
+     }
+
 
      .goal-counter {
          margin: 14px;
@@ -764,6 +889,7 @@
              padding: 10px;
          }
      }
+
 
      /* Small Devices (Mobile Phones) */
      @media (max-width: 600px) {
