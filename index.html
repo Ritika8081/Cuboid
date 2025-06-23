@@ -596,36 +596,29 @@
 
 
 
-        function setDifficulty(level, displayValue, threshold) {
-            betaThreshold = 0.30; // Always set to 0.30
-            thresholdDisplay.textContent = "0.30";
-
+        function setDifficulty(level) {
             difficultyButtons.forEach(btn => btn.classList.remove('active'));
 
             const targetBtn = Array.from(difficultyButtons).find(
                 btn => btn.dataset.level === level
             );
+
             if (targetBtn) {
                 forwardStep = parseInt(targetBtn.dataset.stepforward || '10');
                 backStep = parseInt(targetBtn.dataset.stepback || '5');
                 targetBtn.classList.add('active');
             }
-        }
 
-        // Attach event listeners to all buttons
+            // Do NOT override betaThreshold here
+            thresholdDisplay.textContent = betaThreshold.toFixed(2);
+        }
         difficultyButtons.forEach(button => {
             button.addEventListener('click', () => {
                 const level = button.dataset.level;
-                setDifficulty(level, "0.30", 0.30); // Always use 0.30
+                setDifficulty(level); // ✅ Only pass level
             });
         });
 
-        // Set default to easy
-        const defaultButton = document.querySelector('.difficulty-btn[data-level="easy"]');
-        if (defaultButton) {
-            const level = defaultButton.dataset.level;
-            setDifficulty(level, "0.30", 0.30); // Always use 0.30
-        }
 
 
 
