@@ -66,10 +66,9 @@
         <div class="rules-content">
             <span class="close-btn" id="closeRules">&times;</span>
 
-            <p><strong>🎯 Goal:</strong> Push the cuboid to 100% by staying focused. Your Beta brainwaves control the
-                upward motion.</p>
+            <p><strong>🎯 Goal:</strong> Push the cuboid to upward by staying focused.</p>
 
-            <h3>📋 Steps</h3>
+            <h5>📋 Steps</h5>
             <ol>
                 <li>Connect your NPG Lite device.</li>
                 <li>Run calibration to set your personal threshold.</li>
@@ -77,7 +76,7 @@
                 <li>Stay focused to rise — lose focus and you'll fall!</li>
             </ol>
 
-            <h3>🎮 Levels</h3>
+            <h5>🎮 Levels</h5>
             <ul>
                 <li><strong>🟢 Beginner:</strong> +10 / -2 — Easy climb.</li>
                 <li><strong>🟡 Easy:</strong> +8 / -3 — Gentle challenge.</li>
@@ -86,7 +85,7 @@
                 <li><strong>🟣 Pro:</strong> +3 / -6 — Elite level.</li>
             </ul>
 
-            <h3>🎨 Progress Bar</h3>
+            <h5>🎨 Progress Bar</h5>
             <ul>
                 <li>🔴 Red: Low focus</li>
                 <li>🟠 Orange: Warming up</li>
@@ -94,10 +93,13 @@
                 <li>🟢 Green: Near goal</li>
             </ul>
 
-            <h3>💡 Tips</h3>
+            <h4>💡 Tips</h4>
             <ul>
                 <li>Visualize success or numbers.</li>
                 <li>Stay still, relaxed, alert.</li>
+                <li><strong>To recalibrate:</strong> Click the <b>Stop Stream</b> button, then click <b>Start Stream</b>
+                    again.
+                </li>
             </ul>
 
             <p style="font-style: italic; color: #444;">Train your brain. Improve focus. Enjoy the journey.</p>
@@ -283,6 +285,7 @@
             console.log(`New shape initialized: ${currentShape}`);
         }
         function startCalibrationPhase() {
+            shapeMovementAllowed = false;
             betaMaxDuringCalibration = 0;
             calibrationStartTime = performance.now();
             smoother.clear();
@@ -433,7 +436,13 @@
 
             setTimeout(() => {
                 msg.remove();
-                initializeShape(); // Now start the shape game
+                stepPosition = 0;
+                goalReached = false;
+                celebrationActive = false;
+                updateShapePosition();
+                setTimeout(() => {
+                    shapeMovementAllowed = true; // <-- Allow movement now!
+                }, 1000);
             }, 2500);
         }
         function updateShapePosition() {
@@ -698,9 +707,6 @@
             });
         });
 
-        setDifficulty('easy');
-
-
         // Attach event listeners to all buttons
         difficultyButtons.forEach(button => {
             button.addEventListener('click', () => {
@@ -711,6 +717,12 @@
             });
         });
 
+        // Set default to easy
+        const defaultButton = document.querySelector('.difficulty-btn[data-level="easy"]');
+        if (defaultButton) {
+            const level = defaultButton.dataset.level;
+            setDifficulty(level, "0.30", 0.30); // Always use 0.30
+        }
 
         // Utility functions
         function normalizeSample(sample) {
@@ -807,32 +819,10 @@
 
             const currentTime = performance.now();
 
-            if (smooth.beta >= betaThreshold) {
-                if (!lastAboveThresholdTime) lastAboveThresholdTime = currentTime;
-                if (currentTime - lastAboveThresholdTime >= 3000) {
-                    animateStepChange(forwardStep); // no delta here
-                    lastAboveThresholdTime = null;
-                    lastBelowThresholdTime = null;
-                }
-            } else {
-                if (!lastBelowThresholdTime) lastBelowThresholdTime = currentTime;
-                if (currentTime - lastBelowThresholdTime >= 3000) {
-                    animateStepChange(-backStep); // still easy to read
-                    lastBelowThresholdTime = null;
-                    lastAboveThresholdTime = null;
-                }
-            }
-
+            if (!shapeMovementAllowed) return; // ✅ movement locked during calibration/modal
 
             if (smooth.beta >= betaThreshold) {
                 if (!lastAboveThresholdTime) lastAboveThresholdTime = currentTime;
-
-                // 🔥 Add visual glow
-                if (betaBar) {
-                    betaBar.classList.add("glow");
-                    setTimeout(() => betaBar.classList.remove("glow"), 500);
-                }
-
                 if (currentTime - lastAboveThresholdTime >= 3000) {
                     animateStepChange(forwardStep);
                     lastAboveThresholdTime = null;
@@ -840,14 +830,12 @@
                 }
             } else {
                 if (!lastBelowThresholdTime) lastBelowThresholdTime = currentTime;
-
                 if (currentTime - lastBelowThresholdTime >= 3000) {
                     animateStepChange(-backStep);
                     lastBelowThresholdTime = null;
                     lastAboveThresholdTime = null;
                 }
             }
-
         }
 
         function processFFT() {
@@ -994,6 +982,39 @@
         disconnectBtn.addEventListener("click", disconnectBLE);
         startBtn.addEventListener("click", startStream);
         stopBtn.addEventListener("click", stopStream);
+
+        let shapeMovementAllowed = true; // new flag
+
+        function update() {
+            if (!connected || !streaming) return;
+
+            // Only allow shape movement if beta is above threshold
+            if (shapeMovementAllowed) {
+                if (smooth.beta >= betaThreshold) {
+                    if (!lastAboveThresholdTime) lastAboveThresholdTime = currentTime;
+                    if (currentTime - lastAboveThresholdTime >= 3000) {
+                        animateStepChange(forwardStep);
+                        lastAboveThresholdTime = null;
+                        lastBelowThresholdTime = null;
+                    }
+                } else {
+                    if (!lastBelowThresholdTime) lastBelowThresholdTime = currentTime;
+                    if (currentTime - lastBelowThresholdTime >= 3000) {
+                        animateStepChange(-backStep);
+                        lastBelowThresholdTime = null;
+                        lastAboveThresholdTime = null;
+                    }
+                }
+            }
+        }
+
+        // Call update function in a loop
+        function gameLoop() {
+            update();
+            requestAnimationFrame(gameLoop);
+        }
+
+        requestAnimationFrame(gameLoop); // start the loop
     </script>
 </body>
 
