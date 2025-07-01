@@ -63,12 +63,13 @@
     </div>
 
     <div id="rulesModal" class="rules-modal">
-        <div class="rules-content">
+        <div class="rules-content" style="max-height: 80vh; overflow-y: auto;">
             <span class="close-btn" id="closeRules">&times;</span>
 
-            <p><strong>🎯 Goal:</strong> Push the cuboid to upward by staying focused.</p>
+            <h2 style="text-align: center;">Welcome To Cuboid!</h2>
 
-            <h5>📋 Steps</h5>
+
+            <h3>📋 Steps</h3>
             <ol>
                 <li>Connect your NPG Lite device.</li>
                 <li>Run calibration to set your personal threshold.</li>
@@ -76,16 +77,57 @@
                 <li>Stay focused to rise — lose focus and you'll fall!</li>
             </ol>
 
-            <h5>🎮 Levels</h5>
-            <ul>
-                <li><strong>🟢 Beginner:</strong> +10 / -2 — Easy climb.</li>
-                <li><strong>🟡 Easy:</strong> +8 / -3 — Gentle challenge.</li>
-                <li><strong>🟠 Medium:</strong> +6 / -4 — Balanced play.</li>
-                <li><strong>🔴 Hard:</strong> +4 / -5 — Demands focus.</li>
-                <li><strong>🟣 Pro:</strong> +3 / -6 — Elite level.</li>
-            </ul>
+            <h3>🎮 Current Difficulty Design Logic</h3>
+            <table style="width:100%;border-collapse:collapse;margin-bottom:16px;">
+                <thead>
+                    <tr style="background:#f1f2f6;">
+                        <th style="padding:6px 8px;border:1px solid #dfe4ea;">Level</th>
+                        <th style="padding:6px 8px;border:1px solid #dfe4ea;">Step Forward</th>
+                        <th style="padding:6px 8px;border:1px solid #dfe4ea;">Step Back</th>
+                        <th style="padding:6px 8px;border:1px solid #dfe4ea;">Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="padding:6px 8px;border:1px solid #dfe4ea;"><strong>Beginner</strong></td>
+                        <td style="padding:6px 8px;border:1px solid #dfe4ea;">15</td>
+                        <td style="padding:6px 8px;border:1px solid #dfe4ea;">3</td>
+                        <td style="padding:6px 8px;border:1px solid #dfe4ea;">Very forgiving, quick progress with little
+                            penalty
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:6px 8px;border:1px solid #dfe4ea;"><strong>Easy</strong></td>
+                        <td style="padding:6px 8px;border:1px solid #dfe4ea;">13</td>
+                        <td style="padding:6px 8px;border:1px solid #dfe4ea;">5</td>
+                        <td style="padding:6px 8px;border:1px solid #dfe4ea;">Still easy, but backward penalty is
+                            noticeable
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:6px 8px;border:1px solid #dfe4ea;"><strong>Medium</strong></td>
+                        <td style="padding:6px 8px;border:1px solid #dfe4ea;">10</td>
+                        <td style="padding:6px 8px;border:1px solid #dfe4ea;">6</td>
+                        <td style="padding:6px 8px;border:1px solid #dfe4ea;">Balanced challenge</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:6px 8px;border:1px solid #dfe4ea;"><strong> Hard</strong></td>
+                        <td style="padding:6px 8px;border:1px solid #dfe4ea;">8</td>
+                        <td style="padding:6px 8px;border:1px solid #dfe4ea;">7</td>
+                        <td style="padding:6px 8px;border:1px solid #dfe4ea;">Small reward, steep penalty</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:6px 8px;border:1px solid #dfe4ea;"><strong>Pro</strong></td>
+                        <td style="padding:6px 8px;border:1px solid #dfe4ea;">7</td>
+                        <td style="padding:6px 8px;border:1px solid #dfe4ea;">8</td>
+                        <td style="padding:6px 8px;border:1px solid #dfe4ea;">Progress is slower than regress — very
+                            strict
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
 
-            <h5>🎨 Progress Bar</h5>
+            <h3>🎨 Progress Bar</h3>
             <ul>
                 <li>🔴 Red: Low focus</li>
                 <li>🟠 Orange: Warming up</li>
@@ -93,7 +135,7 @@
                 <li>🟢 Green: Near goal</li>
             </ul>
 
-            <h4>💡 Tips</h4>
+            <h3>💡 Tips</h3>
             <ul>
                 <li>Visualize success or numbers.</li>
                 <li>Stay still, relaxed, alert.</li>

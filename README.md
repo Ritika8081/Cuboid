@@ -41,27 +41,38 @@ Cuboid/
 
 ## 🕹️ How to Play
 
-### 🎯 Goal
-Push the cuboid upward by staying focused.
+**Cuboid** is a neurofeedback game that uses your brain's electrical activity (EEG) to move shapes. Here's how to get started:
+
+### 🧠 Goal:
+Move the shape **upward into the GOAL zone** by increasing your **Beta brainwave activity (focus/alertness)**. Do it 5 times to win!
 
 ---
 
-### 📋 Steps
-
-1. **Connect your NPG Lite device.**
-2. **Run calibration** to set your personal threshold.
-3. **Select a difficulty level.**
-4. **Stay focused to rise — lose focus and you'll fall!**
+### 🔌 1. Connect Your NPG Lite Device
+- Make sure your NPG Lite is powered on and advertising via **Bluetooth Low Energy (BLE)**.
+- Open `index.html` in **Chrome** or **Edge** (must support Web Bluetooth).
+- Click the `Connect` button.
+- Select your device from the list.
 
 ---
 
-### 🎮 Levels
+### 🎯 2. Choose Difficulty
+- Select from: **Beginner, Easy, Medium, Hard, Pro**
+- Difficulty affects movement speed (not threshold):
+  - Easier levels move faster when focused
+  - Harder levels move slower when focused
 
-- 🟢 **Beginner:** +10 / -2 — Easy climb.
-- 🟡 **Easy:** +8 / -3 — Gentle challenge.
-- 🟠 **Medium:** +6 / -4 — Balanced play.
-- 🔴 **Hard:** +4 / -5 — Demands focus.
-- 🟣 **Pro:** +3 / -6 — Elite level.
+---
+
+### 🎮 Current Difficulty Design Logic
+
+| Level    | Step Forward | Step Back | Notes                                         |
+|----------|--------------|-----------|-----------------------------------------------|
+| Beginner | 15           | 3         | Very forgiving, quick progress with little penalty |
+| Easy     | 13           | 5         | Still easy, but backward penalty is noticeable |
+| Medium   | 10           | 6         | Balanced challenge                            |
+| Hard     | 8            | 7         | Small reward, steep penalty                   |
+| Pro      | 7            | 8         | Progress is slower than regress — very strict |
 
 ---
 
@@ -74,14 +85,34 @@ Push the cuboid upward by staying focused.
 
 ---
 
-### 💡 Tips
-
-- Visualize success or numbers.
-- Stay still, relaxed, alert.
-- **To recalibrate:** Click the **Stop Stream** button, then click **Start Stream** again.
-- Train your brain. Improve focus. Enjoy the journey.
+### ▶️ 3. Start the EEG Stream
+- Click `Start` after connecting.
+- The game will automatically begin a **5-second calibration phase** to measure your maximum beta activity.
+- After calibration, EEG data will start flowing, and bars for **Delta, Theta, Alpha, Beta, Gamma** will update in real-time.
 
 ---
+
+### 🧠 4. Focus and Control
+- Focus your mind to raise **Beta waves** above your personal threshold.
+- When your beta activity is sustained for 3 seconds, the shape moves upward.
+- If beta drops below threshold for 3 seconds, the shape moves downward.
+- If it reaches the goal zone — 🎉 you score a GOAL!
+
+---
+
+### 🏆 5. Win the Game
+- Score **5 goals** to win.
+- You'll see a **"YOU WIN"** celebration screen.
+- Click "Play Again" to restart.
+
+---
+
+### 🧘‍♀️ Tips for Playing
+- During calibration, try to focus intensely to set a higher personal threshold
+- Maintain consistent focus - the shape moves after 3 seconds of sustained beta activity
+- Practice different mental states to observe how brainwaves shift.
+- **To recalibrate:** Click the **Stop** button, then click **Start** again.
+- Train your brain. Improve focus. Enjoy the journey.
 
 ## 👩‍💻 Author
 

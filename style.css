@@ -30,8 +30,7 @@
          backdrop-filter: blur(10px);
          border: 1px solid rgba(255, 255, 255, 0.2);
      }
-
-
+       
      /* Make the rules button inline and nicely spaced */
      .rules-button {
          position: static;
@@ -55,7 +54,6 @@
          background: #0652dd;
      }
 
-     /* Modal overlay: full screen, centered content */
      /* Modal overlay: full screen, centered content */
      .rules-modal {
          margin-top: 13px;
@@ -83,7 +81,7 @@
          background-color: #fff;
          padding: 28px 36px;
          border-radius: 16px;
-         max-width: 420px;
+         max-width: 520px;
          width: 90vw;
          text-align: left;
          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
