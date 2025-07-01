@@ -196,53 +196,6 @@
          cursor: pointer;
      }
 
-     /* Enhanced Hexagon */
-     .shape-hexagon {
-         width: 60px;
-         height: 52px;
-         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-         position: relative;
-         filter: drop-shadow(0 8px 25px rgba(102, 126, 234, 0.5));
-         transition: all 0.3s ease;
-         animation: hexagon-float 3s ease-in-out infinite;
-     }
-
-     .shape-hexagon::before,
-     .shape-hexagon::after {
-         content: "";
-         position: absolute;
-         width: 0;
-         border-left: 30px solid transparent;
-         border-right: 30px solid transparent;
-         transition: all 0.3s ease;
-     }
-
-     .shape-hexagon::before {
-         bottom: 100%;
-         border-bottom: 15px solid #667eea;
-         filter: brightness(1.1);
-     }
-
-     .shape-hexagon::after {
-         top: 100%;
-         border-top: 15px solid #764ba2;
-         filter: brightness(0.9);
-     }
-
-
-
-     @keyframes hexagon-float {
-
-         0%,
-         100% {
-             transform: translateY(0px) rotate(0deg);
-         }
-
-         50% {
-             transform: translateY(-5px) rotate(5deg);
-         }
-     }
-
      /* Enhanced Cuboid */
      .shape-cuboid {
          width: 60px;
@@ -377,7 +330,7 @@
      }
 
      .cuboid-color {
-         background: linear-gradient(120deg, #48dbfb 60%, #1dd1a1 100%) !important;
+         background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
      }
 
      .rectangular-prism-color {
@@ -385,7 +338,7 @@
      }
 
      .box-color {
-         background: linear-gradient(120deg, #7bade2 60%, #8cb3e1 100%) !important;
+         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)!important;
      }
 
      .celebration {

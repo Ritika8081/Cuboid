@@ -97,7 +97,7 @@
             <ul>
                 <li>Visualize success or numbers.</li>
                 <li>Stay still, relaxed, alert.</li>
-                <li><strong>To recalibrate:</strong> Click the <b>Stop Stream</b> button, then click <b>Start Stream</b>
+                <li><strong>To recalibrate:</strong> Click the <b>Stop</b> button, then click <b>Start</b>
                     again.
                 </li>
             </ul>
@@ -180,10 +180,10 @@
                     <span class="btn-text">Disconnect</span>
                 </button>
                 <button id="startBtn" class="control-btn start-btn" disabled>
-                    <span class="btn-text">Start Stream</span>
+                    <span class="btn-text">Start</span>
                 </button>
                 <button id="stopBtn" class="control-btn stop-btn" disabled>
-                    <span class="btn-text">Stop Stream</span>
+                    <span class="btn-text">Stop</span>
                 </button>
             </div>
         </div>
@@ -227,6 +227,7 @@
         const startBtn = document.getElementById("startBtn");
         const stopBtn = document.getElementById("stopBtn");
         const statusText = document.getElementById("statusText");
+        let shapeMovementAllowed = true; // new flag
 
         // BLE constants
         const SERVICE_UUID = "4fafc201-1fb5-459e-8fcc-c5c9c331914b";
@@ -972,6 +973,9 @@
                     updateButtonStates();
                     console.log("Streaming stopped.");
                 }
+                // Reset shape position to zero and update UI
+                stepPosition = 0;
+                updateShapePosition();
             } catch (err) {
                 console.log("Error stopping stream:", err);
             }
@@ -983,38 +987,6 @@
         startBtn.addEventListener("click", startStream);
         stopBtn.addEventListener("click", stopStream);
 
-        let shapeMovementAllowed = true; // new flag
-
-        function update() {
-            if (!connected || !streaming) return;
-
-            // Only allow shape movement if beta is above threshold
-            if (shapeMovementAllowed) {
-                if (smooth.beta >= betaThreshold) {
-                    if (!lastAboveThresholdTime) lastAboveThresholdTime = currentTime;
-                    if (currentTime - lastAboveThresholdTime >= 3000) {
-                        animateStepChange(forwardStep);
-                        lastAboveThresholdTime = null;
-                        lastBelowThresholdTime = null;
-                    }
-                } else {
-                    if (!lastBelowThresholdTime) lastBelowThresholdTime = currentTime;
-                    if (currentTime - lastBelowThresholdTime >= 3000) {
-                        animateStepChange(-backStep);
-                        lastBelowThresholdTime = null;
-                        lastAboveThresholdTime = null;
-                    }
-                }
-            }
-        }
-
-        // Call update function in a loop
-        function gameLoop() {
-            update();
-            requestAnimationFrame(gameLoop);
-        }
-
-        requestAnimationFrame(gameLoop); // start the loop
     </script>
 </body>
 
