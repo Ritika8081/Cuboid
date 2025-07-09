@@ -63,88 +63,97 @@
     </div>
 
     <div id="rulesModal" class="rules-modal">
-        <div class="rules-content" style="max-height: 80vh; overflow-y: auto;">
+        <div class="rules-content-wide">
             <span class="close-btn" id="closeRules">&times;</span>
+            
+            <h2 style="text-align: center; margin-bottom: 30px;">Welcome To Cuboid!</h2>
+            
+            <div class="rules-columns">
+                <!-- Left Column -->
+                <div class="rules-left-column">
+                    <h3>📋 Steps</h3>
+                    <ol>
+                        <li>Connect your NPG Lite device.</li>
+                        <li>Adjust the beta threshold using the slider.</li>
+                        <li>Select a difficulty level.</li>
+                        <li>Stay focused to rise — lose focus and you'll fall!</li>
+                    </ol>
 
-            <h2 style="text-align: center;">Welcome To Cuboid!</h2>
+                    <h3>🎮 Current Difficulty Design Logic</h3>
+                    <table class="difficulty-table">
+                        <thead>
+                            <tr>
+                                <th>Level</th>
+                                <th>Step Forward</th>
+                                <th>Step Back</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Beginner</strong></td>
+                                <td>15</td>
+                                <td>3</td>
+                                <td>Very forgiving, quick progress</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Easy</strong></td>
+                                <td>13</td>
+                                <td>5</td>
+                                <td>Still easy, noticeable penalty</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Medium</strong></td>
+                                <td>10</td>
+                                <td>6</td>
+                                <td>Balanced challenge</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Hard</strong></td>
+                                <td>8</td>
+                                <td>7</td>
+                                <td>Small reward, steep penalty</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Pro</strong></td>
+                                <td>7</td>
+                                <td>8</td>
+                                <td>Progress slower than regress</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
+                <!-- Right Column -->
+                <div class="rules-right-column">
+                    <h3>🎨 Progress Bar Colors</h3>
+                    <ul class="color-list">
+                        <li><span class="color-indicator red"></span> Red: Low focus</li>
+                        <li><span class="color-indicator orange"></span> Orange: Warming up</li>
+                        <li><span class="color-indicator yellow"></span> Yellow: Midway</li>
+                        <li><span class="color-indicator green"></span> Green: Near goal</li>
+                    </ul>
 
-            <h3>📋 Steps</h3>
-            <ol>
-                <li>Connect your NPG Lite device.</li>
-                <li>Adjust the beta threshold using the slider.</li>
-                <li>Select a difficulty level.</li>
-                <li>Stay focused to rise — lose focus and you'll fall!</li>
-            </ol>
+                    <h3>💡 Tips for Success</h3>
+                    <ul class="tips-list">
+                        <li>🧠 Visualize success or focus on numbers</li>
+                        <li>🧘 Stay still, relaxed, but alert</li>
+                        <li>🎯 Maintain steady concentration</li>
+                        <li>⚡ Avoid sudden movements</li>
+                    </ul>
 
-            <h3>🎮 Current Difficulty Design Logic</h3>
-            <table style="width:100%;border-collapse:collapse;margin-bottom:16px;">
-                <thead>
-                    <tr style="background:#f1f2f6;">
-                        <th style="padding:6px 8px;border:1px solid #dfe4ea;">Level</th>
-                        <th style="padding:6px 8px;border:1px solid #dfe4ea;">Step Forward</th>
-                        <th style="padding:6px 8px;border:1px solid #dfe4ea;">Step Back</th>
-                        <th style="padding:6px 8px;border:1px solid #dfe4ea;">Notes</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td style="padding:6px 8px;border:1px solid #dfe4ea;"><strong>Beginner</strong></td>
-                        <td style="padding:6px 8px;border:1px solid #dfe4ea;">15</td>
-                        <td style="padding:6px 8px;border:1px solid #dfe4ea;">3</td>
-                        <td style="padding:6px 8px;border:1px solid #dfe4ea;">Very forgiving, quick progress with little
-                            penalty
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:6px 8px;border:1px solid #dfe4ea;"><strong>Easy</strong></td>
-                        <td style="padding:6px 8px;border:1px solid #dfe4ea;">13</td>
-                        <td style="padding:6px 8px;border:1px solid #dfe4ea;">5</td>
-                        <td style="padding:6px 8px;border:1px solid #dfe4ea;">Still easy, but backward penalty is
-                            noticeable
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:6px 8px;border:1px solid #dfe4ea;"><strong>Medium</strong></td>
-                        <td style="padding:6px 8px;border:1px solid #dfe4ea;">10</td>
-                        <td style="padding:6px 8px;border:1px solid #dfe4ea;">6</td>
-                        <td style="padding:6px 8px;border:1px solid #dfe4ea;">Balanced challenge</td>
-                    </tr>
-                    <tr>
-                        <td style="padding:6px 8px;border:1px solid #dfe4ea;"><strong> Hard</strong></td>
-                        <td style="padding:6px 8px;border:1px solid #dfe4ea;">8</td>
-                        <td style="padding:6px 8px;border:1px solid #dfe4ea;">7</td>
-                        <td style="padding:6px 8px;border:1px solid #dfe4ea;">Small reward, steep penalty</td>
-                    </tr>
-                    <tr>
-                        <td style="padding:6px 8px;border:1px solid #dfe4ea;"><strong>Pro</strong></td>
-                        <td style="padding:6px 8px;border:1px solid #dfe4ea;">7</td>
-                        <td style="padding:6px 8px;border:1px solid #dfe4ea;">8</td>
-                        <td style="padding:6px 8px;border:1px solid #dfe4ea;">Progress is slower than regress — very
-                            strict
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                    <h3>🏆 Game Objective</h3>
+                    <div class="objective-box">
+                        <p>Reach the goal 🎯 <strong>5 times</strong> to win!</p>
+                        <p>Use your focus to control the shape's movement.</p>
+                    </div>
 
-            <h3>🎨 Progress Bar</h3>
-            <ul>
-                <li>🔴 Red: Low focus</li>
-                <li>🟠 Orange: Warming up</li>
-                <li>🟡 Yellow: Midway</li>
-                <li>🟢 Green: Near goal</li>
-            </ul>
-
-            <h3>💡 Tips</h3>
-            <ul>
-                <li>Visualize success or numbers.</li>
-                <li>Stay still, relaxed, alert.</li>
-                <li><strong>To recalibrate:</strong> Click the <b>Stop</b> button, then click <b>Start</b>
-                    again.
-                </li>
-            </ul>
-
-            <p style="font-style: italic; color: #444;">Train your brain. Improve focus. Enjoy the journey.</p>
+                    <div class="game-start-section">
+                        <p class="motivational-text">Train your brain. Improve focus. Enjoy the journey.</p>
+                        <button id="startGameBtn" class="start-game-btn">🚀 Start Game</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="control-panel updated-panel">
@@ -300,12 +309,34 @@
         const rulesBtn = document.getElementById("rulesBtn");
         const rulesModal = document.getElementById("rulesModal");
         const closeRules = document.getElementById("closeRules");
+        const startGameBtn = document.getElementById("startGameBtn");
+
         rulesBtn.addEventListener("click", () => {
             rulesModal.classList.add("show");
         });
+
         closeRules.addEventListener("click", () => {
             rulesModal.classList.remove("show");
         });
+
+        // Add start game button functionality
+        startGameBtn.addEventListener("click", () => {
+            rulesModal.classList.remove("show");
+            
+            // Auto-connect and start if not already connected
+            if (!connected) {
+                connectBLE().then(() => {
+                    if (connected) {
+                        setTimeout(() => {
+                            startStream();
+                        }, 1000);
+                    }
+                });
+            } else if (!streaming) {
+                startStream();
+            }
+        });
+
         window.addEventListener("click", (e) => {
             if (e.target === rulesModal) {
                 rulesModal.classList.remove("show");
