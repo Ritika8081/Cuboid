@@ -65,87 +65,134 @@
     <div id="rulesModal" class="rules-modal">
         <div class="rules-content-wide">
             <span class="close-btn" id="closeRules">&times;</span>
-            
-            <h2 style="text-align: center; margin-bottom: 30px;">Welcome To Cuboid!</h2>
-            
+
+            <h2 class="modal-header">Welcome To Cuboid!</h2>
+
             <div class="rules-columns">
                 <!-- Left Column -->
                 <div class="rules-left-column">
-                    <h3>📋 Steps</h3>
-                    <ol>
-                        <li>Connect your NPG Lite device.</li>
-                        <li>Adjust the beta threshold using the slider.</li>
-                        <li>Select a difficulty level.</li>
-                        <li>Stay focused to rise — lose focus and you'll fall!</li>
-                    </ol>
+                    <div class="steps-section">
+                        <h3>📋 Steps</h3>
+                        <ol class="steps-list">
+                            <li>Connect your NPG Lite device.</li>
+                            <li>Adjust the beta threshold using the slider.</li>
+                            <li>Select a difficulty level.</li>
+                            <li>Stay focused to rise — lose focus and you'll fall!</li>
+                        </ol>
+                    </div>
 
-                    <h3>🎮 Current Difficulty Design Logic</h3>
-                    <table class="difficulty-table">
-                        <thead>
-                            <tr>
-                                <th>Level</th>
-                                <th>Step Forward</th>
-                                <th>Step Back</th>
-                                <th>Notes</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>Beginner</strong></td>
-                                <td>15</td>
-                                <td>3</td>
-                                <td>Very forgiving, quick progress</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Easy</strong></td>
-                                <td>13</td>
-                                <td>5</td>
-                                <td>Still easy, noticeable penalty</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Medium</strong></td>
-                                <td>10</td>
-                                <td>6</td>
-                                <td>Balanced challenge</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Hard</strong></td>
-                                <td>8</td>
-                                <td>7</td>
-                                <td>Small reward, steep penalty</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Pro</strong></td>
-                                <td>7</td>
-                                <td>8</td>
-                                <td>Progress slower than regress</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="difficulty-section">
+                        <h3>🎮 Difficulty Levels</h3>
+                        <table class="difficulty-table">
+                            <thead>
+                                <tr>
+                                    <th>Level</th>
+                                    <th>Up</th>
+                                    <th>Down</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Beginner</strong></td>
+                                    <td>15</td>
+                                    <td>3</td>
+                                    <td>Quick progress, low penalty</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Easy</strong></td>
+                                    <td>13</td>
+                                    <td>5</td>
+                                    <td>Moderate penalty</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Medium</strong></td>
+                                    <td>10</td>
+                                    <td>6</td>
+                                    <td>Balanced challenge</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Hard</strong></td>
+                                    <td>8</td>
+                                    <td>7</td>
+                                    <td>High penalty</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Pro</strong></td>
+                                    <td>7</td>
+                                    <td>8</td>
+                                    <td>Strict mode</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="controls-section">
+                        <h3>🎛️ Game Controls</h3>
+                        <div class="controls-grid">
+                            <div class="control-item">
+                                <span class="control-icon">🔌</span>
+                                <div>
+                                    <strong>Connect</strong>
+                                    <p>Link NPG device</p>
+                                </div>
+                            </div>
+                            <div class="control-item">
+                                <span class="control-icon">▶️</span>
+                                <div>
+                                    <strong>Start</strong>
+                                    <p>Begin streaming</p>
+                                </div>
+                            </div>
+                            <div class="control-item">
+                                <span class="control-icon">⏹️</span>
+                                <div>
+                                    <strong>Stop</strong>
+                                    <p>Pause game</p>
+                                </div>
+                            </div>
+                            <div class="control-item">
+                                <span class="control-icon">🎚️</span>
+                                <div>
+                                    <strong>Threshold</strong>
+                                    <p>Adjust sensitivity</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Right Column -->
                 <div class="rules-right-column">
-                    <h3>🎨 Progress Bar Colors</h3>
-                    <ul class="color-list">
-                        <li><span class="color-indicator red"></span> Red: Low focus</li>
-                        <li><span class="color-indicator orange"></span> Orange: Warming up</li>
-                        <li><span class="color-indicator yellow"></span> Yellow: Midway</li>
-                        <li><span class="color-indicator green"></span> Green: Near goal</li>
-                    </ul>
+                    <div class="colors-section">
+                        <h3>🎨 Progress Colors</h3>
+                        <ul class="color-list">
+                            <li><span class="color-indicator red"></span> Red: Low focus (0-30%)</li>
+                            <li><span class="color-indicator orange"></span> Orange: Warming up (30-60%)</li>
+                            <li><span class="color-indicator yellow"></span> Yellow: Midway (60-90%)</li>
+                            <li><span class="color-indicator green"></span> Green: Near goal (90-100%)</li>
+                        </ul>
+                    </div>
 
-                    <h3>💡 Tips for Success</h3>
-                    <ul class="tips-list">
-                        <li>🧠 Visualize success or focus on numbers</li>
-                        <li>🧘 Stay still, relaxed, but alert</li>
-                        <li>🎯 Maintain steady concentration</li>
-                        <li>⚡ Avoid sudden movements</li>
-                    </ul>
+                    <div class="tips-section">
+                        <h3>💡 Tips for Success</h3>
+                        <ul class="tips-list">
+                            <li>🧠 Visualize success or focus on numbers</li>
+                            <li>🧘 Stay still, relaxed, but alert</li>
+                            <li>🎯 Maintain steady concentration</li>
+                        </ul>
+                    </div>
 
-                    <h3>🏆 Game Objective</h3>
-                    <div class="objective-box">
-                        <p>Reach the goal 🎯 <strong>5 times</strong> to win!</p>
-                        <p>Use your focus to control the shape's movement.</p>
+                    <div class="objective-section">
+                        <h3>🏆 Game Objective</h3>
+                        <div class="objective-box">
+                            <p>Reach the goal 🎯 <strong>5 times</strong> to win!</p>
+                            <p>Use your focus to control the shape's movement.</p>
+                            <div class="stats-mini">
+                                <span>⏱️ Hold focus for 3 seconds to move up</span>
+                                <span>😴 Lose focus for 3 seconds to move down</span>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="game-start-section">
@@ -322,7 +369,7 @@
         // Add start game button functionality
         startGameBtn.addEventListener("click", () => {
             rulesModal.classList.remove("show");
-            
+
             // Auto-connect and start if not already connected
             if (!connected) {
                 connectBLE().then(() => {
@@ -615,8 +662,6 @@
                 }, 2500);
             }, 600); // match animation time
         }
-
-
 
         function showWinningMessage() {
             const winningMsg = document.createElement('div');
