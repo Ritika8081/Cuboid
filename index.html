@@ -72,7 +72,7 @@
             <h3>📋 Steps</h3>
             <ol>
                 <li>Connect your NPG Lite device.</li>
-                <li>Run calibration to set your personal threshold.</li>
+                <li>Adjust the beta threshold using the slider.</li>
                 <li>Select a difficulty level.</li>
                 <li>Stay focused to rise — lose focus and you'll fall!</li>
             </ol>
@@ -152,29 +152,28 @@
 
         <div class="panel-section difficulty-section">
             <div class="section-header">
-
                 <span class="section-title">🎯 Difficulty Level</span>
-                <button id="rulesBtn" class="rules-button margin-left:10px">❓ How to Play</button>
-                <div class="threshold-display">
-                    <span class="threshold-label">Threshold:</span>
-                    <span class="value-display" id="betaThresholdValue">0.30</span>
-
+                <button id="rulesBtn" class="rules-button margin-left:10px">❓Rules</button>
+                <div class="threshold-controls">
+                    <span class="threshold-label">Beta Threshold:</span>
+                    <div class="slider-container">
+                        <input type="range" id="betaSlider" min="0.1" max="1.0" step="0.01" value="0.30"
+                            class="threshold-slider">
+                        <span class="value-display" id="betaThresholdValue">0.30</span>
+                    </div>
                 </div>
             </div>
 
 
-
             <div class="difficulty-buttons">
 
-                <button class="difficulty-btn" data-level="beginner" data-threshold="0.30" data-stepforward="15"
-                    data-stepback="3">
+                <button class="difficulty-btn" data-level="beginner" data-stepforward="15" data-stepback="3">
                     <span class="btn-icon beginner-icon"></span>
                     <span class="btn-text">Beginner</span>
 
                 </button>
 
-                <button class="difficulty-btn" data-level="easy" data-threshold="0.30" data-stepforward="13"
-                    data-stepback="5">
+                <button class="difficulty-btn" data-level="easy" data-stepforward="13" data-stepback="5">
                     <span class="btn-icon easy-icon"></span>
                     <span class="btn-text">Easy</span>
 
@@ -740,8 +739,7 @@
                 targetBtn.classList.add('active');
             }
 
-            // Do NOT override betaThreshold here
-            thresholdDisplay.textContent = betaThreshold.toFixed(2);
+            console.log(`Difficulty set to ${level}: Forward=${forwardStep}, Back=${backStep}`);
         }
         difficultyButtons.forEach(button => {
             button.addEventListener('click', () => {
@@ -866,14 +864,14 @@
 
             if (smooth.beta >= betaThreshold) {
                 if (!lastAboveThresholdTime) lastAboveThresholdTime = currentTime;
-                if (currentTime - lastAboveThresholdTime >= 3000) {
+                if (currentTime - lastAboveThresholdTime >= 2000) {
                     animateStepChange(forwardStep);
                     lastAboveThresholdTime = null;
                     lastBelowThresholdTime = null;
                 }
             } else {
                 if (!lastBelowThresholdTime) lastBelowThresholdTime = currentTime;
-                if (currentTime - lastBelowThresholdTime >= 3000) {
+                if (currentTime - lastBelowThresholdTime >= 2000) {
                     animateStepChange(-backStep);
                     lastBelowThresholdTime = null;
                     lastAboveThresholdTime = null;
@@ -998,13 +996,20 @@
                 updateButtonStates();
                 console.log("Streaming started.");
 
-                startCalibrationPhase();  // ⬅️ initiate the 5-second beta calibration
+                // Reset game state
+                stepPosition = 0;
+                goalReached = false;
+                celebrationActive = false;
+                updateShapePosition();
+
+                // Allow movement immediately (no calibration delay)
+                shapeMovementAllowed = true;
+
             } catch (err) {
                 console.log("Error starting stream:", err);
                 alert("Error starting stream: " + err);
             }
         }
-
 
         async function stopStream() {
             try {
@@ -1029,6 +1034,18 @@
         startBtn.addEventListener("click", startStream);
         stopBtn.addEventListener("click", stopStream);
 
+        // Add this after the DOM elements are defined
+        const betaSlider = document.getElementById('betaSlider');
+
+        // Add slider event listener
+        betaSlider.addEventListener('input', function () {
+            betaThreshold = parseFloat(this.value);
+            betaThresholdValue.textContent = betaThreshold.toFixed(2);
+            console.log('Beta threshold set to:', betaThreshold);
+        });
+
+        // Initialize threshold from slider
+        betaThreshold = parseFloat(betaSlider.value);
     </script>
 </body>
 
