@@ -127,39 +127,6 @@
                         </table>
                     </div>
 
-                    <div class="controls-section">
-                        <h3>🎛️ Game Controls</h3>
-                        <div class="controls-grid">
-                            <div class="control-item">
-                                <span class="control-icon">🔌</span>
-                                <div>
-                                    <strong>Connect</strong>
-                                    <p>Link NPG device</p>
-                                </div>
-                            </div>
-                            <div class="control-item">
-                                <span class="control-icon">▶️</span>
-                                <div>
-                                    <strong>Start</strong>
-                                    <p>Begin streaming</p>
-                                </div>
-                            </div>
-                            <div class="control-item">
-                                <span class="control-icon">⏹️</span>
-                                <div>
-                                    <strong>Stop</strong>
-                                    <p>Pause game</p>
-                                </div>
-                            </div>
-                            <div class="control-item">
-                                <span class="control-icon">🎚️</span>
-                                <div>
-                                    <strong>Threshold</strong>
-                                    <p>Adjust sensitivity</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
                 <!-- Right Column -->
@@ -174,30 +141,21 @@
                         </ul>
                     </div>
 
-                    <div class="tips-section">
-                        <h3>💡 Tips for Success</h3>
-                        <ul class="tips-list">
-                            <li>🧠 Visualize success or focus on numbers</li>
-                            <li>🧘 Stay still, relaxed, but alert</li>
-                            <li>🎯 Maintain steady concentration</li>
-                        </ul>
-                    </div>
-
                     <div class="objective-section">
                         <h3>🏆 Game Objective</h3>
                         <div class="objective-box">
                             <p>Reach the goal 🎯 <strong>5 times</strong> to win!</p>
                             <p>Use your focus to control the shape's movement.</p>
                             <div class="stats-mini">
-                                <span>⏱️ Hold focus for 3 seconds to move up</span>
-                                <span>😴 Lose focus for 3 seconds to move down</span>
+                                <span>⏱️ Hold focus for 2 seconds to move up</span>
+                                <span>😴 Lose focus for 2 seconds to move down</span>
                             </div>
                         </div>
                     </div>
 
                     <div class="game-start-section">
                         <p class="motivational-text">Train your brain. Improve focus. Enjoy the journey.</p>
-                        <button id="startGameBtn" class="start-game-btn">🚀 Start Game</button>
+                        <button id="startGameBtn" class="start-game-btn">Start Game</button>
                     </div>
                 </div>
             </div>
@@ -358,35 +316,72 @@
         const closeRules = document.getElementById("closeRules");
         const startGameBtn = document.getElementById("startGameBtn");
 
+        // Function to prevent body scroll
+        function preventBodyScroll() {
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Function to restore body scroll
+        function restoreBodyScroll() {
+            document.body.style.overflow = '';
+        }
+
+        // Show modal automatically when page loads
+        document.addEventListener('DOMContentLoaded', function () {
+            // Small delay to ensure everything is loaded
+            setTimeout(() => {
+                rulesModal.classList.add("show");
+                preventBodyScroll();
+            }, 500);
+        });
+
+        // Update existing event listeners
         rulesBtn.addEventListener("click", () => {
             rulesModal.classList.add("show");
+            preventBodyScroll();
         });
 
         closeRules.addEventListener("click", () => {
             rulesModal.classList.remove("show");
+            restoreBodyScroll();
         });
 
-        // Add start game button functionality
-        startGameBtn.addEventListener("click", () => {
-            rulesModal.classList.remove("show");
+        // Add start game button functionality if it doesn't exist
+        if (document.getElementById("startGameBtn")) {
+            document.getElementById("startGameBtn").addEventListener("click", () => {
+                rulesModal.classList.remove("show");
+                restoreBodyScroll();
 
-            // Auto-connect and start if not already connected
-            if (!connected) {
-                connectBLE().then(() => {
-                    if (connected) {
-                        setTimeout(() => {
-                            startStream();
-                        }, 1000);
-                    }
-                });
-            } else if (!streaming) {
-                startStream();
-            }
-        });
+                // Auto-connect and start if not already connected
+                if (!connected) {
+                    connectBLE().then(() => {
+                        if (connected) {
+                            setTimeout(() => {
+                                startStream();
+                            }, 1000);
+                        }
+                    }).catch(err => {
+                        console.log("Auto-connect failed:", err);
+                        // Just close modal if connection fails
+                    });
+                } else if (!streaming) {
+                    startStream();
+                }
+            });
+        }
 
         window.addEventListener("click", (e) => {
             if (e.target === rulesModal) {
                 rulesModal.classList.remove("show");
+                restoreBodyScroll();
+            }
+        });
+
+        // Handle escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && rulesModal.classList.contains('show')) {
+                rulesModal.classList.remove("show");
+                restoreBodyScroll();
             }
         });
 
