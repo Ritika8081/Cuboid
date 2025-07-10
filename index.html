@@ -25,40 +25,104 @@
     </div>
 
     <div class="band-display">
-        <div class="band-row">
-            <span class="band-label">Delta</span>
-            <div class="band-bar-container">
-                <div id="deltaBar" class="band-bar delta-bar" style="width: 0%;"></div>
+        <!-- Existing Band Bars -->
+        <div class="band-bars-section">
+            <div class="band-row">
+                <span class="band-label">Delta</span>
+                <div class="band-bar-container">
+                    <div id="deltaBar" class="band-bar delta-bar" style="width: 0%;"></div>
+                </div>
+                <span id="deltaValue" class="band-value">0%</span>
             </div>
-            <span id="deltaValue" class="band-value">0%</span>
+            <div class="band-row">
+                <span class="band-label">Theta</span>
+                <div class="band-bar-container">
+                    <div id="thetaBar" class="band-bar theta-bar" style="width: 0%;"></div>
+                </div>
+                <span id="thetaValue" class="band-value">0%</span>
+            </div>
+            <div class="band-row">
+                <span class="band-label">Alpha</span>
+                <div class="band-bar-container">
+                    <div id="alphaBar" class="band-bar alpha-bar" style="width: 0%;"></div>
+                </div>
+                <span id="alphaValue" class="band-value">0%</span>
+            </div>
+            <div class="band-row">
+                <span class="band-label">Beta</span>
+                <div class="band-bar-container">
+                    <div id="betaBar" class="band-bar beta-bar" style="width: 0%;"></div>
+                </div>
+                <span id="betaValue" class="band-value">0%</span>
+            </div>
+            <div class="band-row">
+                <span class="band-label">Gamma</span>
+                <div class="band-bar-container">
+                    <div id="gammaBar" class="band-bar gamma-bar" style="width: 0%;"></div>
+                </div>
+                <span id="gammaValue" class="band-value">0%</span>
+            </div>
         </div>
-        <div class="band-row">
-            <span class="band-label">Theta</span>
-            <div class="band-bar-container">
-                <div id="thetaBar" class="band-bar theta-bar" style="width: 0%;"></div>
+
+        <!-- Spider Radar Plot - Fixed Label Positions -->
+        <div class="radar-section">
+            <div class="radar-container">
+
+                <div class="radar-chart-container">
+                    <svg id="radarChart" class="radar-chart" viewBox="0 0 300 300">
+                        <!-- Background circles -->
+                        <g class="radar-grid">
+                            <circle cx="150" cy="150" r="120" fill="none" stroke="#e0e0e0" stroke-width="1" />
+                            <circle cx="150" cy="150" r="96" fill="none" stroke="#e0e0e0" stroke-width="1" />
+                            <circle cx="150" cy="150" r="72" fill="none" stroke="#e0e0e0" stroke-width="1" />
+                            <circle cx="150" cy="150" r="48" fill="none" stroke="#e0e0e0" stroke-width="1" />
+                            <circle cx="150" cy="150" r="24" fill="none" stroke="#e0e0e0" stroke-width="1" />
+                        </g>
+
+                        <!-- Axis lines -->
+                        <g class="radar-axes">
+                            <!-- Delta (top) -->
+                            <line x1="150" y1="150" x2="150" y2="30" stroke="#ccc" stroke-width="1" />
+                            <!-- Theta (top-right) -->
+                            <line x1="150" y1="150" x2="246" y2="66" stroke="#ccc" stroke-width="1" />
+                            <!-- Alpha (bottom-right) -->
+                            <line x1="150" y1="150" x2="246" y2="234" stroke="#ccc" stroke-width="1" />
+                            <!-- Beta (bottom-left) -->
+                            <line x1="150" y1="150" x2="54" y2="234" stroke="#ccc" stroke-width="1" />
+                            <!-- Gamma (top-left) -->
+                            <line x1="150" y1="150" x2="54" y2="66" stroke="#ccc" stroke-width="1" />
+                        </g>
+
+                        <!-- ✅ FIXED LABELS - Better Positioning -->
+                        <g class="radar-labels">
+                            <!-- Delta (top) - moved further up -->
+                            <text x="150" y="18" text-anchor="middle" class="radar-label delta-label">Delta</text>
+                            <!-- Theta (top-right) - moved further out -->
+                            <text x="265" y="60" text-anchor="start" class="radar-label theta-label">Theta</text>
+                            <!-- Alpha (bottom-right) - moved further out -->
+                            <text x="265" y="250" text-anchor="start" class="radar-label alpha-label">Alpha</text>
+                            <!-- Beta (bottom-left) - moved further out -->
+                            <text x="35" y="250" text-anchor="end" class="radar-label beta-label">Beta</text>
+                            <!-- Gamma (top-left) - moved further out -->
+                            <text x="35" y="60" text-anchor="end" class="radar-label gamma-label">Gamma</text>
+                        </g>
+
+                        <!-- Data polygon -->
+                        <polygon id="radarPolygon" class="radar-polygon"
+                            points="150,150 150,150 150,150 150,150 150,150" fill="rgba(52, 152, 219, 0.3)"
+                            stroke="#3498db" stroke-width="2" />
+
+                        <!-- Data points -->
+                        <g class="radar-points">
+                            <circle id="deltaPoint" cx="150" cy="150" r="4" class="radar-point delta-point" />
+                            <circle id="thetaPoint" cx="150" cy="150" r="4" class="radar-point theta-point" />
+                            <circle id="alphaPoint" cx="150" cy="150" r="4" class="radar-point alpha-point" />
+                            <circle id="betaPoint" cx="150" cy="150" r="4" class="radar-point beta-point" />
+                            <circle id="gammaPoint" cx="150" cy="150" r="4" class="radar-point gamma-point" />
+                        </g>
+                    </svg>
+                </div>
             </div>
-            <span id="thetaValue" class="band-value">0%</span>
-        </div>
-        <div class="band-row">
-            <span class="band-label">Alpha</span>
-            <div class="band-bar-container">
-                <div id="alphaBar" class="band-bar alpha-bar" style="width: 0%;"></div>
-            </div>
-            <span id="alphaValue" class="band-value">0%</span>
-        </div>
-        <div class="band-row">
-            <span class="band-label">Beta</span>
-            <div class="band-bar-container">
-                <div id="betaBar" class="band-bar beta-bar" style="width: 0%;"></div>
-            </div>
-            <span id="betaValue" class="band-value">0%</span>
-        </div>
-        <div class="band-row">
-            <span class="band-label">Gamma</span>
-            <div class="band-bar-container">
-                <div id="gammaBar" class="band-bar gamma-bar" style="width: 0%;"></div>
-            </div>
-            <span id="gammaValue" class="band-value">0%</span>
         </div>
     </div>
 
@@ -84,7 +148,8 @@
                     <div class="difficulty-section">
                         <h3>🎮 Difficulty Levels</h3>
 
-                        <!-- Table for larger screens -->
+
+
                         <div class="difficulty-table-desktop">
                             <div class="table-wrapper">
                                 <table class="difficulty-table">
@@ -153,6 +218,7 @@
                         <div class="objective-box">
                             <p>Reach the goal 🎯 <strong>5 times</strong> to win!</p>
 
+
                             <div class="stats-mini">
                                 <span>⏱️ Hold focus for 2 seconds to move up</span>
                                 <span>😴 Lose focus for 2 seconds to move down</span>
@@ -161,7 +227,7 @@
                     </div>
 
                     <div class="game-start-section">
-                        <p class="motivational-text">Train your brain. Improve focus. Enjoy the journey.</p>
+
                         <button id="startGameBtn" class="start-game-btn">Start Game</button>
                     </div>
                 </div>
@@ -675,7 +741,7 @@
             margin-top: 20px;
             padding: 12px 32px;
             font-size: 1.2em;
-            background: linear-gradient(90deg, #48dbfb, #1dd1a1);
+            background: #48dbfb;
             color: #fff;
             border: none;
             border-radius: 30px;
@@ -920,21 +986,25 @@
                 gamma: gammaP / total
             };
 
-            smoother.updateAll(rels);
+            smoother.updateAll(rels);  // ✅ Same smoothing as bars
 
             const smooth = {
-                delta: smoother.getSmoothed('delta'),
+                delta: smoother.getSmoothed('delta'),    // ✅ Same smoothed values
                 theta: smoother.getSmoothed('theta'),
                 alpha: smoother.getSmoothed('alpha'),
                 beta: smoother.getSmoothed('beta'),
                 gamma: smoother.getSmoothed('gamma')
             };
 
+            // Update bar charts with smoothed values
             ['delta', 'theta', 'alpha', 'beta', 'gamma'].forEach(band => {
                 const pct = Math.round(smooth[band] * 100);
                 document.getElementById(`${band}Bar`).style.width = `${pct}%`;
                 document.getElementById(`${band}Value`).textContent = `${pct}%`;
             });
+
+            // ✅ Update radar chart with SAME smoothed values
+            updateRadarChart(smooth.delta, smooth.theta, smooth.alpha, smooth.beta, smooth.gamma);
 
             const currentTime = performance.now();
 
@@ -1124,6 +1194,59 @@
 
         // Initialize threshold from slider
         betaThreshold = parseFloat(betaSlider.value);
+
+        // Radar chart update function
+        function updateRadarChart(deltaP, thetaP, alphaP, betaP, gammaP) {
+            const centerX = 150;
+            const centerY = 150;
+            const maxRadius = 120;
+
+            // Calculate angles for each band (pentagon layout)
+            const angles = {
+                delta: -Math.PI / 2,                    // Top
+                theta: -Math.PI / 2 + (2 * Math.PI / 5),     // 72°
+                alpha: -Math.PI / 2 + (4 * Math.PI / 5),     // 144°
+                beta: -Math.PI / 2 + (6 * Math.PI / 5),      // 216°
+                gamma: -Math.PI / 2 + (8 * Math.PI / 5)      // 288°
+            };
+
+            // Calculate total for normalization
+            const total = deltaP + thetaP + alphaP + betaP + gammaP;
+            if (total <= 0) return;
+
+            // Calculate relative percentages
+            const values = {
+                delta: (deltaP / total) * 100,
+                theta: (thetaP / total) * 100,
+                alpha: (alphaP / total) * 100,
+                beta: (betaP / total) * 100,
+                gamma: (gammaP / total) * 100
+            };
+
+            // Calculate points
+            const points = [];
+            const bands = ['delta', 'theta', 'alpha', 'beta', 'gamma'];
+
+            bands.forEach(band => {
+                const radius = (values[band] / 100) * maxRadius;
+                const x = centerX + radius * Math.cos(angles[band]);
+                const y = centerY + radius * Math.sin(angles[band]);
+                points.push(`${x},${y}`);
+
+                // Update individual points
+                const point = document.getElementById(`${band}Point`);
+                if (point) {
+                    point.setAttribute('cx', x);
+                    point.setAttribute('cy', y);
+                }
+            });
+
+            // Update polygon
+            const polygon = document.getElementById('radarPolygon');
+            if (polygon) {
+                polygon.setAttribute('points', points.join(' '));
+            }
+        }
     </script>
 </body>
 
