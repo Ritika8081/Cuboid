@@ -64,10 +64,9 @@
             </div>
         </div>
 
-        <!-- Spider Radar Plot - Fixed Label Positions -->
+        <!-- Spider Radar Plot - Mathematically Perfect Pentagon -->
         <div class="radar-section">
             <div class="radar-container">
-
                 <div class="radar-chart-container">
                     <svg id="radarChart" class="radar-chart" viewBox="0 0 300 300">
                         <!-- Background circles -->
@@ -79,32 +78,37 @@
                             <circle cx="150" cy="150" r="24" fill="none" stroke="#e0e0e0" stroke-width="1" />
                         </g>
 
-                        <!-- Axis lines -->
+                        <!-- ✅ MATHEMATICALLY PERFECT Pentagon Axis Lines -->
                         <g class="radar-axes">
-                            <!-- Delta (top) -->
+                            <!-- Delta (0°) -->
                             <line x1="150" y1="150" x2="150" y2="30" stroke="#ccc" stroke-width="1" />
-                            <!-- Theta (top-right) -->
-                            <line x1="150" y1="150" x2="246" y2="66" stroke="#ccc" stroke-width="1" />
-                            <!-- Alpha (bottom-right) -->
-                            <line x1="150" y1="150" x2="246" y2="234" stroke="#ccc" stroke-width="1" />
-                            <!-- Beta (bottom-left) -->
-                            <line x1="150" y1="150" x2="54" y2="234" stroke="#ccc" stroke-width="1" />
-                            <!-- Gamma (top-left) -->
-                            <line x1="150" y1="150" x2="54" y2="66" stroke="#ccc" stroke-width="1" />
+
+                            <!-- Theta (72°) -->
+                            <line x1="150" y1="150" x2="265.83" y2="113.46" stroke="#ccc" stroke-width="1" />
+
+                            <!-- Alpha (144°) -->
+                            <line x1="150" y1="150" x2="223.53" y2="246.54" stroke="#ccc" stroke-width="1" />
+
+                            <!-- Beta (216°) -->
+                            <line x1="150" y1="150" x2="76.47" y2="247.54" stroke="#ccc" stroke-width="1" />
+
+                            <!-- Gamma (288°) -->
+                            <line x1="150" y1="150" x2="33.17" y2="113.46" stroke="#ccc" stroke-width="1" />
+
                         </g>
 
-                        <!-- ✅ FIXED LABELS - Better Positioning -->
+                        <!-- ✅ PERFECT Pentagon Label Positioning (further out) -->
                         <g class="radar-labels">
-                            <!-- Delta (top) - moved further up -->
-                            <text x="150" y="18" text-anchor="middle" class="radar-label delta-label">Delta</text>
-                            <!-- Theta (top-right) - moved further out -->
-                            <text x="265" y="60" text-anchor="start" class="radar-label theta-label">Theta</text>
-                            <!-- Alpha (bottom-right) - moved further out -->
-                            <text x="265" y="250" text-anchor="start" class="radar-label alpha-label">Alpha</text>
-                            <!-- Beta (bottom-left) - moved further out -->
-                            <text x="35" y="250" text-anchor="end" class="radar-label beta-label">Beta</text>
-                            <!-- Gamma (top-left) - moved further out -->
-                            <text x="35" y="60" text-anchor="end" class="radar-label gamma-label">Gamma</text>
+                            <!-- Delta (0°, top) -->
+                            <text x="150" y="12" text-anchor="middle" class="radar-label delta-label">Delta</text>
+                            <!-- Theta (72°, top-right) -->
+                            <text x="279" y="110" text-anchor="start" class="radar-label theta-label">Theta</text>
+                            <!-- Alpha (144°, bottom-right) -->
+                            <text x="230" y="265" text-anchor="start" class="radar-label alpha-label">Alpha</text>
+                            <!-- Beta (216°, bottom-left) -->
+                            <text x="80" y="270" text-anchor="end" class="radar-label beta-label">Beta</text>
+                            <!-- Gamma (288°, top-left) -->
+                            <text x="25" y="110" text-anchor="end" class="radar-label gamma-label">Gamma</text>
                         </g>
 
                         <!-- Data polygon -->
@@ -588,51 +592,19 @@
             }, 100);
         }
 
-        function applyCalibratedThreshold() {
-            betaThreshold = betaMaxDuringCalibration;
-            thresholdDisplay.textContent = betaThreshold.toFixed(2);
-            console.log("Calibration complete. Beta threshold set to:", betaThreshold.toFixed(2));
+        function generateRadarAxesSVG(centerX, centerY, radius, count = 5) {
+            const angleStep = (2 * Math.PI) / count;
+            let lines = '';
 
-            // Create a temporary overlay message
-            const msg = document.createElement('div');
-            msg.className = 'calibration-message';
-            msg.innerHTML = `
-        <div style="
-            background: #fff;
-            border-radius: 20px;
-            padding: 28px 36px;
-            box-shadow: 0 4px 24px rgba(30,200,180,0.18);
-            text-align: center;
-            font-size: 1.3em;
-            color: #10ac84;
-            font-weight: bold;
-        ">
-            Calibration complete!<br>
-            <span style="color:#222f3e;font-weight:normal;font-size:0.9em;">
-                Beta threshold set to: <span style="color:#48dbfb;">${betaThreshold.toFixed(2)}</span>
-            </span>
-        </div>
-    `;
-            msg.style.position = 'fixed';
-            msg.style.top = '50%';
-            msg.style.left = '50%';
-            msg.style.transform = 'translate(-50%, -50%)';
-            msg.style.zIndex = 3000;
-            msg.style.pointerEvents = 'none';
-
-            document.body.appendChild(msg);
-
-            setTimeout(() => {
-                msg.remove();
-                stepPosition = 0;
-                goalReached = false;
-                celebrationActive = false;
-                updateShapePosition();
-                setTimeout(() => {
-                    shapeMovementAllowed = true; // <-- Allow movement now!
-                }, 1000);
-            }, 2500);
+            for (let i = 0; i < count; i++) {
+                const angle = -Math.PI / 2 + i * angleStep;
+                const x = centerX + radius * Math.cos(angle);
+                const y = centerY + radius * Math.sin(angle);
+                lines += `<line x1="${centerX}" y1="${centerY}" x2="${x.toFixed(2)}" y2="${y.toFixed(2)}" stroke="#ccc" stroke-width="1" />\n`;
+            }
+            return lines;
         }
+
         function updateShapePosition() {
             const arenaHeight = movingShape.parentElement.clientHeight - 140;
             const bottomPosition = 20 + (stepPosition / 100) * arenaHeight;
@@ -1194,50 +1166,32 @@
 
         // Initialize threshold from slider
         betaThreshold = parseFloat(betaSlider.value);
-
-        // Radar chart update function
-        function updateRadarChart(deltaP, thetaP, alphaP, betaP, gammaP) {
+        // ✅ PERFECT Pentagon Radar Chart Function
+        function updateRadarChart(deltaRel, thetaRel, alphaRel, betaRel, gammaRel) {
             const centerX = 150;
             const centerY = 150;
             const maxRadius = 120;
 
-            // Calculate angles for each band (pentagon layout)
-            const angles = {
-                delta: -Math.PI / 2,                    // Top
-                theta: -Math.PI / 2 + (2 * Math.PI / 5),     // 72°
-                alpha: -Math.PI / 2 + (4 * Math.PI / 5),     // 144°
-                beta: -Math.PI / 2 + (6 * Math.PI / 5),      // 216°
-                gamma: -Math.PI / 2 + (8 * Math.PI / 5)      // 288°
-            };
-
-            // Calculate total for normalization
-            const total = deltaP + thetaP + alphaP + betaP + gammaP;
-            if (total <= 0) return;
-
-            // Calculate relative percentages
-            const values = {
-                delta: (deltaP / total) * 100,
-                theta: (thetaP / total) * 100,
-                alpha: (alphaP / total) * 100,
-                beta: (betaP / total) * 100,
-                gamma: (gammaP / total) * 100
-            };
-
-            // Calculate points
-            const points = [];
+            // ✅ EXACT Pentagon calculation - 72° spacing
             const bands = ['delta', 'theta', 'alpha', 'beta', 'gamma'];
+            const values = [deltaRel, thetaRel, alphaRel, betaRel, gammaRel];
 
-            bands.forEach(band => {
-                const radius = (values[band] / 100) * maxRadius;
-                const x = centerX + radius * Math.cos(angles[band]);
-                const y = centerY + radius * Math.sin(angles[band]);
-                points.push(`${x},${y}`);
+            const points = [];
+
+            bands.forEach((band, i) => {
+                // Perfect pentagon angle calculation
+                const angle = -Math.PI / 2 + (i * 2 * Math.PI / 5);
+                const radius = values[i] * maxRadius;
+                const x = centerX + radius * Math.cos(angle);
+                const y = centerY + radius * Math.sin(angle);
+
+                points.push(`${x.toFixed(2)},${y.toFixed(2)}`);
 
                 // Update individual points
                 const point = document.getElementById(`${band}Point`);
                 if (point) {
-                    point.setAttribute('cx', x);
-                    point.setAttribute('cy', y);
+                    point.setAttribute('cx', x.toFixed(2));
+                    point.setAttribute('cy', y.toFixed(2));
                 }
             });
 
@@ -1247,6 +1201,7 @@
                 polygon.setAttribute('points', points.join(' '));
             }
         }
+
     </script>
 </body>
 

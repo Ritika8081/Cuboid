@@ -365,7 +365,7 @@
          box-shadow: 0 4px 20px rgba(255, 255, 255, 0.3);
 
          transition: background 0.3s ease;
-         /* Smooth transition for color change */
+
      }
 
      .goal-zone .goal-emoji {
@@ -389,8 +389,6 @@
          transition: background 0.3s ease;
          /* Smooth transition for color change */
      }
-
-
 
      @keyframes goalGlow {
          0% {
@@ -432,8 +430,6 @@
          animation: cuboid-pulse 2s ease-in-out infinite alternate;
      }
 
-
-
      @keyframes cuboid-pulse {
          0% {
              filter: brightness(1);
@@ -461,8 +457,6 @@
          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
          animation: prism-shimmer 2.5s ease-in-out infinite;
      }
-
-
 
      @keyframes prism-shimmer {
 
@@ -631,16 +625,12 @@
          right: clamp(0.5vw, 1vw, 2vw);
          width: clamp(220px, 20vw, 320px);
          max-height: clamp(50vh, 65vh, 80vh);
-         background: rgba(24, 22, 22, 0.1);
-         border: 0.1px solid rgba(255, 255, 255, 0.2);
-         border-radius: clamp(8px, 1.2vw, 16px);
-         backdrop-filter: blur(10px);
-         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+         background: linear-gradient(180deg, rgba(255, 255, 255, 0) 100%);
          z-index: 100;
          display: flex;
          flex-direction: column;
          gap: clamp(6px, 1.5vh, 15px);
-         padding: clamp(8px, 2vh, 16px);
+         padding: clamp(15px, 16vh, 16px);
          overflow-y: auto;
          box-sizing: border-box;
      }
@@ -651,6 +641,8 @@
          flex-direction: column;
          gap: clamp(4px, 0.8vh, 8px);
          flex-shrink: 0;
+         padding-right: 13px;
+         padding-top: 13px;
      }
 
      .band-row {
@@ -759,52 +751,44 @@
          max-height: clamp(180px, 20vh, 280px);
      }
 
-     /* Radar Chart Styles - Fixed Label Positioning */
+     /* Radar Chart Styles - Perfect Pentagon Layout */
      .radar-grid circle {
          fill: none;
-         stroke: rgba(255, 255, 255, 0.25);
-         stroke-width: 1;
+         transition: stroke 0.3s ease;
      }
 
      .radar-axes line {
-         stroke: rgba(255, 255, 255, 0.35);
-         stroke-width: 1;
+         transition: stroke 0.3s ease;
      }
 
-     /* ✅ FIXED RADAR LABELS - No Overlapping */
+     /* ✅ PROPERLY SPACED RADAR LABELS */
      .radar-label {
-         font-size: clamp(10px, 1.4vw, 13px);
-         /* Reduced size to prevent overlap */
+         font-size: clamp(11px, 1.5vw, 14px);
          font-weight: 700;
-         text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
-         letter-spacing: 0.2px;
+
+         letter-spacing: 0.3px;
          dominant-baseline: middle;
-         /* Better vertical alignment */
+         transition: all 0.3s ease;
      }
 
      .delta-label {
          fill: #e74c3c;
-         filter: drop-shadow(0 0 3px rgba(231, 76, 60, 0.8));
      }
 
      .theta-label {
          fill: #f39c12;
-         filter: drop-shadow(0 0 3px rgba(243, 156, 18, 0.8));
      }
 
      .alpha-label {
          fill: #f1c40f;
-         filter: drop-shadow(0 0 3px rgba(241, 196, 15, 0.8));
      }
 
      .beta-label {
          fill: #27ae60;
-         filter: drop-shadow(0 0 3px rgba(39, 174, 96, 0.8));
      }
 
      .gamma-label {
          fill: #9b59b6;
-         filter: drop-shadow(0 0 3px rgba(155, 89, 182, 0.8));
      }
 
      .radar-polygon {
@@ -812,18 +796,14 @@
          stroke: #3498db;
          stroke-width: 2;
          transition: all 0.4s ease;
-         /* ✅ Smooth transitions */
-         filter: drop-shadow(0 0 6px rgba(52, 152, 219, 0.4));
+         filter: drop-shadow(0 0 8px rgba(52, 152, 219, 0.4));
      }
 
      .radar-point {
          transition: all 0.4s ease;
-         /* ✅ Smooth transitions */
          stroke-width: 2;
          stroke: rgba(255, 255, 255, 0.9);
-         filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
-         r: clamp(3, 0.8vw, 5);
-         /* Responsive point size */
+         filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
      }
 
      .delta-point {
@@ -844,6 +824,19 @@
 
      .gamma-point {
          fill: #9b59b6;
+     }
+
+     /* Responsive adjustments */
+     @media (max-width: 768px) {
+         .radar-label {
+             font-size: clamp(9px, 2vw, 12px);
+         }
+     }
+
+     @media (max-width: 480px) {
+         .radar-label {
+             font-size: clamp(8px, 2.5vw, 10px);
+         }
      }
 
      /* Large Desktop (1920px+) */
