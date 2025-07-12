@@ -86,16 +86,16 @@ Move the shape **upward into the GOAL zone** by increasing your **Beta brainwave
 ---
 
 ### ▶️ 3. Start the EEG Stream
+- Set beta threshold accoding to your personal threshold
 - Click `Start` after connecting.
-- The game will automatically begin a **5-second calibration phase** to measure your maximum beta activity.
-- After calibration, EEG data will start flowing, and bars for **Delta, Theta, Alpha, Beta, Gamma** will update in real-time.
+- EEG data will start flowing, and bars for **Delta, Theta, Alpha, Beta, Gamma** will update in real-time.
 
 ---
 
 ### 🧠 4. Focus and Control
 - Focus your mind to raise **Beta waves** above your personal threshold.
-- When your beta activity is sustained for 3 seconds, the shape moves upward.
-- If beta drops below threshold for 3 seconds, the shape moves downward.
+- When your beta activity is sustained for 2 seconds, the shape moves upward.
+- If beta drops below threshold for 2 seconds, the shape moves downward.
 - If it reaches the goal zone — 🎉 you score a GOAL!
 
 ---
@@ -107,11 +107,12 @@ Move the shape **upward into the GOAL zone** by increasing your **Beta brainwave
 
 ---
 
+### Note:
+- when you open game you will see a modal with a button named "Connect" click on it to connect your device.
+
 ### 🧘‍♀️ Tips for Playing
-- During calibration, try to focus intensely to set a higher personal threshold
-- Maintain consistent focus - the shape moves after 3 seconds of sustained beta activity
+- Maintain consistent focus - the shape moves after 2 seconds of sustained beta activity
 - Practice different mental states to observe how brainwaves shift.
-- **To recalibrate:** Click the **Stop** button, then click **Start** again.
 - Train your brain. Improve focus. Enjoy the journey.
 
 ## 👩‍💻 Author
